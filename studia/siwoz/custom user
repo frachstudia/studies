@@ -1,0 +1,62 @@
+
+
+
+class PatientManager(BaseUserManager):
+    def create_user(self, username, password=None):
+        if not username:
+            raise ValueEroor('Użytkownik musi mieć nazwę')
+
+        sex = (int(username[9]) % 2 == 0) and 'K' or 'M'
+        user = self.model(username=username, sex=sex)
+        user.is_active = True
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password):
+        user = self.create_user(username, password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
+
+
+class Patient(AbstractBaseUser, PermissionsMixin):
+    numeric = RegexValidator(r'^[0-9]*$', message='Nazwa użytkownika może składać się wyłącznie z cyfr.')
+
+    username = models.CharField(unique=True, max_length=11, validators=[numeric])
+    sex = models.CharField(max_length=1)
+    date_joined = models.DateTimeField(auto_now_add=True)
+
+    objects = PatientManager()
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['username', 'sex']
+
+    def __unicode__(self):
+        return self.username
+
+
+class PatientAdmin(UserAdmin):
+    form = MyChangeForm
+    add_form = MyRegistrationForm
+
+    list_display = ('username', 'sex', 'is_superuser')
+    list_filter = ('is_superuser',)
+
+    fieldsets = (
+        (None, {'fields': ('username', 'sex', 'password')}),
+        ('Permissions', {'fields': ('is_active', 'is_superuser', 'is_staff')}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'sex', 'password1', 'password2')
+        }),
+    )
+
+    search_fields = ('username')
+    ordering = ('username')
+    filter_horizontal = ('groups', 'user_permissions',)
+
+admin.site.register(Patient, PatientAdmin)

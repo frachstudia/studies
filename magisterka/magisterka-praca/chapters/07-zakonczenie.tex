@@ -1,0 +1,27 @@
+
+\chapter{Zakończenie}
+
+W ramach niniejszej pracy zaprojektowano oraz zaimplementowano system służący do wymiany zarówno plików, jak i komentarzy. System \emph{TeamSync} w części transportu danych opiera się na aplikacji \emph{BitTorrent Sync} działającej na protokole BitTorrent. Komunikację pomiędzy systemami umożliwia API stworzone przez producentów aplikacji \emph{BitTorrent Sync}, które umożliwia kontrolowanie synchronizowanych danych. Wewnątrz stworzonego systemu \emph{TeamSync} zostało zaimplementowanych wiele funkcjonalności zarówno podstawowych (wymiana komentarzy), jak i dodatkowych (wyszukiwanie, filtrowanie). Wszystkie najistotniejsze funkcje systemu \emph{TeamSync} zostały wymienione poniżej.
+
+Użytkownicy mogą zarządzać (dodawać, modyfikować oraz usuwać) folderami, które współdzielą z innymi użytkownikami w sieci. System \emph{TeamSync} zapewnia pełną nawigację po synchronizowanych katalogach z poziomu interfejsu użytkownika. Interfejs dodatkowo umożliwia tworzenie przez użytkowników nowych wątków, wypowiadanie się wewnątrz nich oraz edycję komentarzy wraz z możliwością przeglądania historii zmian. Tworzone wątki mogą (lecz nie muszą) dotyczyć dowolnych plików zawartych w folderze.
+
+Poza operacjami dokonywanymi na komentarzach system umożliwia swobodne wyszukiwanie informacji, poprzez narzędzia sortujące i filtrujące wypowiedzi oraz wątki. Dyskusje mogą zostać posortowane alfabetycznie, chronologicznie, według największej ilości postów oraz według najpóźniej dodanej odpowiedzi. Użytkownik ma możliwość filtrować wątki według procentowego udziału wybranych użytkowników w dyskusji. System również umożliwia wyszukiwanie wpisywanych przez użytkownika fraz w komentarzach z możliwością zmiany zbioru komentarzy --- wątek, wszystkie komentarze, wszystkie komentarze konkretnego użytkownika. Dostępny jest też tryb statystyk, w którym wyświetlana jest ilość wypowiedzi każdego z użytkowników oraz ich procentowy udział w zbiorze komentarzy.
+
+Szczegółowy model systemu, jego architektura, ogólny sposób działania, konfiguracja oraz impementacja zostały opisane w poprzednich rozdziałach niniejszej pracy. 
+
+System \emph{TeamSync} został zaimplementowany w sposób umożliwiający jego dalszy rozwój. Wśród dodatkowych funkcjonalności, które mogłyby zostać zaimplementowane bez konieczności dokonywania dużych zmian w strukturze kodu (zarówno części klienckiej, jak i serwerowej) są:
+
+\begin{enumerate}[noitemsep]
+  \item Wykrywanie typów plików obrazów lub muzycznych (np. \texttt{jpg}, \texttt{mp3}) i możliwość ich podglądu (lub odtworzenia w przypadku plików muzycznych).
+  
+  \item Dostosowanie aplikacji TeamSync do pracy z systemami operacyjnymi: Windows oraz MacOS.
+  
+  \item Możliwość dokonywania zmian w synchronizowanym folderze (np. wyłączenie tzw. ,,trackera'', wyszukiwanie innych użytkowników za pomocą DHT \cite{dht}.
+  
+  \item Dodanie kilku dodatkowych ustawień dotyczących graficznego interfejsu:
+  \begin{itemize}[noitemsep]
+    \item możliwość zmiany formatu daty wyświetlanej obok komentarzy,
+    \item możliwość definiowania własnego koloru czcionki lub ramki, wewnątrz której wyświetlane są komentarze użytkownika,
+    \item możliwość wybrania przez użytkownika pliku graficznego (tzw. ,,avatara'') umieszczanego obok jego nazwy na liście użytkowników oraz obok każdego komentarza.
+  \end{itemize}
+\end{enumerate}

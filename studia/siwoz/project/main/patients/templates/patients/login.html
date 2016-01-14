@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html ng-app="patientsApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/notify.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/style.css' %}" />
+</head>
+<body>
+
+<div class="container-fluid" id="mainBody" style="display: none;">
+    <div id="loginDiv">
+    <section ng-controller="PanelController as panel">
+
+        <ul class="nav nav-pills">
+            <li ng-class="{ active: panel.isSelected(1) }"> <a href ng-click="panel.selectTab(1)">Pacjent</a> </li>
+            <li ng-class="{ active: panel.isSelected(2) }"> <a href ng-click="panel.selectTab(2)">Lekarz</a> </li>
+        </ul>
+        <div class="panel" ng-show="panel.isSelected(1)">
+            <h4>Zaloguj się do swojego konta:</h4>
+            <form action="/" method="post" name="loginForm" novalidate>
+            {% csrf_token %}
+                <div class="form-group">
+                    <label for="exampleInputText1">PESEL</label>
+                    <input name="username" type="text" class="form-control" placeholder="Twój numer PESEL" required />
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Hasło</label>
+                    <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Hasło" required />
+                </div>
+                <input type="submit" id="submitButton" class="btn btn-default" value="Zaloguj" />
+            </form>
+
+            <div id="registerSuggestion">
+                Nie masz konta? <a href="/patients/register">Zarejestruj się</a>
+            </div>
+        </div>
+        <div class="panel" ng-show="panel.isSelected(2)">
+            <h4>Zobacz wyniki pacjenta:</h4>
+            <form action="/patients/show" method="post" name="loginForm" novalidate>
+            {% csrf_token %}
+                <div class="form-group">
+                    <label for="exampleInputText1">PESEL</label>
+                    <input name="username" type="text" class="form-control" placeholder="Numer PESEL pacjenta" required />
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Hasło</label>
+                    <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Hasło" required />
+                </div>
+                <input type="submit" id="submitButton" class="btn btn-default" value="Zaloguj" />
+            </form>
+        </div>
+    </section></div>
+</div>
+
+    <script type="text/javascript" src="{% static 'patients/scripts/jquery-2.1.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/angular.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/angular-resource.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/angular-checklist-model.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/dataTables.bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/bootstrap-select.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/notify.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/script.js' %}"></script>
+
+{% if err %}
+<script type="text/javascript">$.notify('{{ err }}', 'error');</script>
+{% endif %}
+
+{% if justRegistered %}
+<script type="text/javascript">$.notify('{{ justRegistered }}', 'success');</script>
+{% endif %}
+
+{% if justLoggedOut %}
+<script type="text/javascript">$.notify('{{ justLoggedOut }}', 'success');</script>
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{1039CD31-72A9-4312-B1B6-54D3CADA9743}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>servstack</RootNamespace>
+    <AssemblyName>servstack</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>True</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>True</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\..\Downloads\packages\ServiceStack.OrmLite.Sqlite.Mono.3.9.59\lib\net35\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="Mono.Security">
+      <HintPath>..\..\Downloads\ormlite.pgsql\net35\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>..\..\Downloads\ormlite.pgsql\net35\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack">
+      <HintPath>..\..\libraries\ServiceStack.3.9.59\lib\net35\ServiceStack.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.ServiceInterface">
+      <HintPath>..\..\libraries\ServiceStack.3.9.59\lib\net35\ServiceStack.ServiceInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\..\libraries\ServiceStack.Common.3.9.59\lib\net35\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>..\..\libraries\ServiceStack.Common.3.9.59\lib\net35\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Logging.NLog">
+      <HintPath>..\..\libraries\ServiceStack.Logging.NLog.1.0.10.0\lib\net35\ServiceStack.Logging.NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite">
+      <HintPath>..\..\libraries\ServiceStack.OrmLite.Sqlite.Mono.3.9.59\lib\net35\ServiceStack.OrmLite.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite.Sqlite">
+      <HintPath>..\..\libraries\ServiceStack.OrmLite.Sqlite.Mono.3.9.59\lib\net35\ServiceStack.OrmLite.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.OrmLite.SqlServer">
+      <HintPath>..\..\libraries\ServiceStack.OrmLite.SqlServer.3.9.59\lib\ServiceStack.OrmLite.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\..\libraries\ServiceStack.Text.3.9.59\lib\net35\ServiceStack.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\..\libraries\NLog.2.0.1.2\nlog\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NetMQ">
+      <HintPath>..\..\libraries\netmq.3.3.0.11\lib\net40\NetMQ.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="src\Services\Hello.cs" />
+    <Compile Include="src\AppHost.cs" />
+    <Compile Include="src\Program.cs" />
+    <Compile Include="src\Logic\Patients\Address.cs" />
+    <Compile Include="src\Logic\Patients\Patient.cs" />
+    <Compile Include="src\Services\PatientService\DtoPatient.cs" />
+    <Compile Include="src\Services\PatientService\DtoPatientResponse.cs" />
+    <Compile Include="src\Services\PatientService\PatientsService.cs" />
+    <Compile Include="src\Services\BaseValidator.cs" />
+    <Compile Include="src\Services\PatientService\DtoPatientValidator.cs" />
+    <Compile Include="src\Logic\Node.cs" />
+    <Compile Include="src\Logic\Hash.cs" />
+    <Compile Include="src\Services\HashService\DtoHash.cs" />
+    <Compile Include="src\Services\HashService\DtoHashResponse.cs" />
+    <Compile Include="src\Services\HashService\HashService.cs" />
+    <Compile Include="src\Services\NodeService\DtoNode.cs" />
+    <Compile Include="src\Services\NodeService\DtoNodeResponse.cs" />
+    <Compile Include="src\Services\NodeService\NodeService.cs" />
+    <Compile Include="src\Logic\Scheduler.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="src\" />
+    <Folder Include="src\Logic\" />
+    <Folder Include="src\Services\" />
+    <Folder Include="src\Logic\Patients\" />
+    <Folder Include="src\Services\PatientService\" />
+    <Folder Include="src\Services\HashService\" />
+    <Folder Include="src\Services\NodeService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{22FD16F1-74FF-4D07-B1F1-10A98EF9349A}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

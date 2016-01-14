@@ -1,0 +1,112 @@
+
+\chapter{Przegląd istniejących rozwiązań}
+
+W niniejszym rozdziale przedstawiono przegląd istniejących rozwiązań, które oferują funkcjonalność zbliżoną do zaproponowanego w pracy magisterskiej.
+
+Do zestawienia wybrano rozwiązania reprezentujące grupę systemów o bardzo zbliżonych wymaganiach --- pominięto usługi, które powielają funkcjonalność swojego reprezentanta. Każdy przedstawiciel grupy różni się od przedstawicieli pozostałych grup architekturą, sposobem przechowywania danych lub dodatkową funkcjonalnością. W zestawieniu wzięto pod uwagę rozwiązania prezentujące różne podejście do tego samego problemu i aby je porównać będą rozważane przede wszystkim następujące właściwości każdego z nich:
+
+\begin{itemize}[noitemsep]
+  \item architektura (centralna/rozproszona),
+  \item lokalizacja przechowywanych danych (dane dostępne lokalnie/zdalnie),
+  \item możliwość współdzielenia plików z innymi użytkownikami (tak/nie),
+  \item możliwość komentowania plików (tak/nie).
+\end{itemize}
+
+Podczas tworzenia zestawienia pominięto kontekst odpłatności za usługi, gdyż nie jest on związany z właściwościami systemów (nie wpływa na funkcjonalność, tylko na ograniczenia bądź udogodnienia świadczone przez dostawców usług). Po omówieniu wszystkich systemów wymienione wyżej parametry każdego z rozwiązań zostaną zebrane w jednej tabeli porównawczej.
+
+\section*{Dropbox}
+
+Najpopularniejszym serwisem oferującym usługi przechowywania oraz zaawansowanego współdzielenia plików jest Dropbox \cite{dropbox}. Firma pojawiła się na rynku we wrześniu 2008 roku, a już w maju 2014 roku korzystało z jej usług ponad 300 milionów użytkowników. Obecność serwisu Dropbox w poniższym zestawieniu tłumaczy nie tylko jego popularność, ale też fakt skupiania w sobie wszystkich funkcji oferowanych przez większość systemów umożliwiających przechowywanie danych w Internecie.
+
+Dropbox jest usługą, która umożliwia zsynchronizowanie lokalnego folderu ze zdalnym serwerem --- w momencie lokalnej zmiany lub gdy zmieni się plik na serwerze (np. inny użytkownik wprowadzi zmianę), rozpoczyna się natychmiastowa synchronizacja. Dodatkowo użytkownik ma możliwość przeglądania zawartości folderu poprzez przeglądarkę internetową na dowolnym komputerze z dostępnej do sieci globalnej. Nie musi więc lokalnie posiadać plików, aby mieć do nich dostęp.
+
+Działanie aplikacji klienckiej systemu Dropbox można przedstawić w następujący sposób: program nasłuchuje, czy któryś z plików lokalnych się zmienił, a następnie (w przypadku, gdy tak było) uspójnia dane z serwerem. Jednocześnie aplikacja odpytuje serwer, czy w międzyczasie nie zaszły zmiany w zawartości plików na serwerze i w przypadku zajścia zmian, uspójnienie następuje po stronie aplikacji klienta --- na lokalnym dysku dane zostają odświeżone do najnowszej wersji. Dane wymieniane są przy pomocy protokołu SSL i składowane na serwerach Amazon S3\footnote{System Dropbox nie zapewnia fizycznej infrastruktury swoim klientom --- korzysta z oferty firmy Amazon o nazwie Amazon S3. Strona internetowa usługi: \url{http://aws.amazon.com/s3/}} poprzez szyfrowanie algorytmem AES256 --- niestety kluczem ,,należącym'' do usługodawcy, nie użytkownika.
+
+Dodatkowo Dropbox umożliwia współdzielenie folderów między różnymi użytkownikami --- właściciel folderu może udostępnić innym cały folder albo poszczególne pliki. System oferuje też przywracanie danych --- w przypadku chęci odtworzenia stanu sprzed jakiegoś czasu można to zrobić, ale nie później niż 30 dni wstecz. Aktualnie w narzędziu Dropbox nie ma możliwości zamieszczania komentarzy przez użytkowników współdzielących folder.
+
+Wśród systemów o identycznej funkcjonalności (pod względem wybranych cech, których dotyczy zestawienie), znajdują się takie narzędzia jak: SugarSync\cite{sugarsync}, SkyDrive\cite{skydrive} oraz MediaFire\cite{mediafire}.
+
+\section*{box}
+
+System box\cite{box} jest pierwowzorem systemu Dropbox. Jest jednak mniej popularny ze względu na odmienną grupę docelową użytkowników, którą twórcy wybrali na początku działania systemu. Box kierowany był głównie dla firm, przez co stracił na popularności, gdy zorientowany na prywatnych użytkowników Dropbox pojawił się na rynku. Box został włączony do tego zestawienia ze względu na swoją dodatkową (względem Dropboxa) funkcjonalność --- wysoko rozwinięte narzędzia ułatwiające współpracę wielu użytkowników nad plikami, w tym przede wszystkim umieszczanie komentarzy.
+
+Box --- podobnie jak jego popularniejszy odpowiednik --- ma centralną architekturę. Klient może umieścić swoje dane na serwerze usługodawcy i zsynchronizować je pomiędzy tym serwerem a swoim lokalnym folderem. W ten sposób użytkownik ma dostęp do danych zarówno lokalnie, jak i zdalnie --- poprzez przeglądarkę z każdego komputera podłączonego do Internetu lub aplikację kliencką dostępną na komputery stacjonarne oraz urządzenia mobilne.
+
+Aplikacja kliencka działa bardzo podobnie do aplikacji zaimplementowanej w ramach systemu Dropbox --- sprawdzane są zmiany w plikach (lokalnie oraz zdalnie poprzez odpytywanie serwera) i w przypadku wykrycia zmian następuje uspójnienie danych. System udostępnia rozbudowaną funkcjonalność w obszarze współpracy użytkowników. Poza współdzieleniem oraz udostępnianiem danych jest również możliwość komentowania plików, co powoduje, że usługa box wyróżnia się na tle serwisów takich jak Dropbox i jemu pokrewnych.
+
+Istnieją aplikacje niemal identyczne (oczywiście w kontekście wybranych cech porównawczych), które jednak wprowadzone do powyższego zestawienia tylko powieliłyby rodzaj architektury i funkcjonalność reprezentowane przez system box. Są to np. Google Drive\cite{googledrive}, która integruje w sobie wiele rozwiązań i oprócz powielonych funkcji systemu box ma możliwość bardzo zaawansowanej pracy nad dokumentami, albo Mega\cite{mega} --- usługa, która wprowadza możliwość rozmowy audio/video między współdzielącymi dane.
+
+\section*{sher.ly}
+
+Sher.ly\cite{sherly} jest systemem, który przy zachowaniu architektury (centralna) różni się od poprzednich lokalizacją udostępnianych danych. Usługa w swojej podstawowej funkcjonalności pozwala na udostępnienie innym użytkownikom danych lokalnych. Klient wybiera plik bądź folder z lokalnego dysku, za pomocą aplikacji przeglądarkowej tworzy grupę, do której zaprasza innych użytkowników, a następnie udostępnia wybrany wcześniej plik/folder. Współpracownicy pobierają dane i mogą je edytować. Dane nie są domyślnie kopiowane do lokalnego systemu plików, dzięki czemu oszczędzane jest miejsce po stronie klienta. Tym samym zwiększone jest bezpieczeństwo danych --- w momencie np. zakończenia współpracy nad umową z którymś prawnikiem można usunąć go z grupy, przez co nie będzie miał już dostępu do danych.
+
+Centralny element w tym systemie nie jest w stałej lokalizacji. Użytkownik oprócz udostępniania lokalnych danych może również udostępniać pliki ze zdalnego serwera --- własnego serwera NAS (Network Area Storage), wykupionego serwera z miejscem do składowania danych, albo nawet usługi Dropbox. W takiej sytuacji centrum systemu nie będzie skupione na komputerze użytkownika, tylko na zdalnym serwerze.
+
+Sher.ly to usługa zorientowana na współpracę pomiędzy użytkownikami, dlatego też posiada dużo udogodnień z tym związanych. Użytkownik będący właścicielem grupy ma pełną kontrolę nad swoimi współpracownikami i danymi, które im udostępnia. Kolejną funkcjonalnością, której nie mają wszystkie pozostałe usługi w zestawieniu, jest możliwość umieszczania komentarzy o danych plikach. Stanowi to podstawę pracy wewnątrz tego systemu, w którym komunikacja jest najważniejsza.
+
+Do transportu danych, sher.ly nie korzysta (jak większość podobnych systemów) z protokołów CIFS\cite{cifs}/SAMBA\cite{samba}, lecz ze swojego protokołu, który znacznie lepiej wykorzystuje przepustowość łącza (50\% CIFS/SAMBA przeciwko ~94\% protokołu twórców sher.ly). Dodatkowo, sher.ly łączy się bezpośrednio między źródłem danych, a odbiorcą --- oznacza to, że jeśli użytkownik udostępnia pozostałym użytkownikom dane ze swojego lokalnego dysku, transportowane są bezpośrednio do nich, bez żadnego komputera pośredniczącego. Twórcy protokołu porównują go do tworzenia połączenia VPN do każdego pliku lub folderu, który ma zostać udostępniony.
+
+\section*{Symform}
+
+Symform\cite{symform} jest projektem najbardziej odbiegającym architekturą i sposobem działania od pozostałych systemów. Jest to w pełni rozproszone współdzielenie danych poprzez ich podział i rozdystrybuowanie ich pomiędzy innych użytkowników sieci. Odbywa się to w następujący sposób:
+
+\begin{enumerate}[noitemsep]
+ \item Plik dzielony jest na bloki.
+ \item Każdy blok szyfrowany jest za pomocą algorytmu AES256\cite{aes}.
+ \item Zaszyfrowany blok dzielony jest na 64 równe części.
+ \item Do każdego bloku dodawane są 32 fragmenty parzystości obliczone za pomocą algorytmu kodowania korekcyjnego Reeda-Solomona\cite{rscode}.
+ \item Uzyskane 96 fragmentów rozdzielamy losowo do 96 różnych urządzeń podłączonych do sieci (ze względu na bezpieczeństwo jeden węzeł nie może posiadać więcej niż jednego fragmentu z konkretnego bloku).
+\end{enumerate}
+
+Po tych krokach, aby uzyskać dostęp do danych (a więc zrekonstruować blok) wystarczy 64 fragmenty z uzyskanych wcześniej 96. Jest to bardzo bezpieczne składowanie danych, ponieważ aby je złamać, należałoby znaleźć 64 fragmenty rozproszone po całej sieci, połączyć je w jeden zaszyfrowany blok, rozszyfrować blok (AES256), a następnie powtórzyć tę samą operację dla wszystkich bloków, z których składa się plik.
+
+Symform to rozwiązanie, które nie jest ukierunkowane do udostępniania danych innym użytkownikom. Jest systemem służącym jako bezpieczna, rozproszona kopia zapasowa danych. Dostępna dla użytkownika przestrzeń to suma przestrzeni udzielonych mu przez innych użytkowników --- może również sam udostępniać innym klientom swoje miejsce na dysku, dzięki czemu zyskuje dodatkową przestrzeń w sieci na składowanie plików. Za miejsce w sieci, którym użytkownik może dysponować, nie płaci pieniędzmi, tylko własnym miejscem udostępnianym innym klientom.
+
+Z racji charakterystyki systemu oraz braku możliwości współdzielenia folderów Symform nie umożliwia komentowania plików pomiędzy użytkownikami. Dostęp do danych --- podobnie jak w klasycznych rozwiązaniach centralnych --- może odbywać się zarówno lokalnie, jak i zdalnie, z wykorzystaniem przeglądarki internetowej.
+
+\section*{BitTorrent Sync}
+
+BitTorrent Sync\cite{btsync} to system umożliwiający zdalne synchronizowanie folderów, który transportuje dane pomiędzy rozproszonymi użytkownikami za pomocą protokołu BitTorrent. Protokół ten wykorzystuje do komunikacji zewnętrzny serwer --- tzw. \emph{tracker}, który odpowiada za odsyłanie do klientów informacji z adresami pozostałych węzłów w sieci. Architektura aplikacji BitTorrent Sync jest rozproszona, a brak centralnego serwera w systemie (nie licząc \emph{trackera}) oraz szyfrowanie komunikacji zapewnia bezpieczniejszy i szybszy transport --- w momencie synchronizacji fragmenty danych pobierane są z wielu źródeł jednocześnie.
+
+Ze względu na zastosowaną architekturę, system BitTorrent Sync nie oferuje zdalnego dostępu do synchronizowanych danych. Aby uzyskać dostęp do plików, użytkownik musi najpierw uspójnić dane z innym użytkownikiem, który w danym momencie ma uruchomiony komputer i łączność z globalną siecią. Nie ma możliwości --- tak jak w przypadku pozostałych omawianych systemów --- przeglądania swoich danych z przeglądarki dowolnego komputera, który jest podłączony do sieci globalnej.
+
+W celu synchronizacji folderów, użytkownik posługuje się 32-znakowym ciągiem cyfr oraz liczb, określanym jako \emph{secret}. Za jego pomocą aplikacje dwóch klientów odnajdują się w sieci i mogą uspójnić dane. Możliwa jest zmiana sposobu wykrywania się wzajemnie przez węzły --- poprzez \emph{DHT}\cite{dht}, \emph{trackera} lub tylko w lokalnej sieci.
+
+Poza częścią aplikacji, która zarządza wymianą danych (wykrywanie zmian w plikach, wyszukiwanie nowych węzłów, transport danych) dostępna jest również aplikacja przeglądarkowa, która umożliwia dodawanie nowych i zarządzanie już zsynchronizowanymi folderami oraz administrowanie użytkownikami podłączonymi do folderu. Twórcy narzędzia umożliwili też komunikację z systemem za pomocą wystawionego API, nasłuchującego przychodzących żądań, za pomocą których możliwe jest sterowanie aplikacją z poziomu kodu programisty.
+
+BitTorrent Sync jest systemem zorientowanym na współdzielenie danych, mimo to nie posiada funkcjonalności umożliwiającej umieszczanie komentarzy w plikach. Usługa skupia się na szybkiej wymianie dużej ilości danych między wieloma użytkownikami, aby maksymalnie wykorzystać zalety protokołu BitTorrent.
+
+\section*{Podsumowanie}
+
+W tej części rozdziału opisane wcześniej rozwiązania zostaną krótko podsumowane uwzględniając ich podstawowe cechy, a następnie zostaną zestawione w tabeli.
+
+System Dropbox jest rozwiązaniem o centralnej architekturze oferującym miejsce do przechowywania plików oraz aplikację przeglądarkową, za pomocą której każdy użytkownik może przeglądać swoje dane. Dostęp do plików jest zarówno lokalny (po zsynchronizowaniu z serwerem), jak i zdalny. Pomimo rozwiniętej kooperacji użytkowników (współdzielenie oraz udostępnianie danych w trybie ,,read only''), nie ma możliwości wymiany komentarzy dotyczących danych.
+
+Box jest narzędziem bardzo podobnym do systemu Dropbox --- również posiada centralną architekturę oraz zarówno zdalny jak i lokalny dostęp do synchronizowanych danych. Przewagą usługi Box jest możliwość zamieszczania przez użytkowników współdzielących dane komentarzy wewnątrz aplikacji przeglądarkowej. Jest to system jeszcze bardziej zorientowany na współpracę niż Dropbox.
+
+Narzędzie sher.ly jest również rozwiązaniem centralnym, z tą różnicą, że użytkownik ma możliwość wskazania źródła danych, które chce udostępnić --- może to być plik na dysku lokalnego komputera, albo zewnętrznej lokalizacji np. wewnątrz własnego konta systemu Dropbox. Usługa bardzo ułatwia pracę wielu osób nad plikami i umożliwia kontrolę dostępu do udostępnianych danych. Zawiera również bardzo dobrze rozwinięte funkcje dzielenia się uwagami w postaci komentarzy.
+
+Symform nie jest aplikacją, której priorytetem jest współpraca użytkowników i udostępnianie danych. Jego rozproszona architektura i zaawansowane algorytmy umieszczania danych w sieci umożliwiają bardzo bezpieczne przechowywanie danych. Narzędzie nei oferuje możliwości udostępniania plików innym użytkownikom, co w konsekwencji nie pozwala na wymianę komentarzy.
+
+BitTorrent Sync o rozproszonym modelu skupia się głównie na szybkości wymiany danych oraz bezpieczeństwie komunikacji (ze względu na brak punktów pośredniczących w wymianie danych). Narzędzie Nastawione jest na współdzielenie plików, ale nie umożliwia wymiany komentarzy. Użytkownik nie ma też możliwości przeglądania danych przed pełnym ich zsynchronizowaniem do swojego lokalnego folderu, a synchronizacja jest możliwa tylko wtedy, gdy inny użytkownik z aktualnymi danymi jest obecnie podłączony do sieci.
+
+Poniższa tabela podsumowuje omówione wcześniej ważniejsze --- w kontekście niniejszej pracy --- cechy istniejących rozwiązań.
+
+\begin{table}[h!]
+ \centering
+ \label{nazwa odnośnika, która potem użyjemy do cytowania tabeli}
+ \begin{tabular}{| l | c | c | c | c |}
+  \hline
+  \textbf{System} & \textbf{Architektura} & \textbf{Źródło danych} & \textbf{Współdzielenie danych} & \textbf{Komentarze} \\
+  \hline
+  Dropbox & centralna & lokalne/zdalne & tak & nie \\
+  sher.ly & centralna & lokalne/zdalne & tak & tak \\
+  box & centralna & lokalne/zdalne & tak & tak \\
+  Symform & rozproszona & lokalne/zdalne & nie & nie \\
+  BitTorrent Sync & rozproszona & lokalne & tak & nie \\
+  \hline
+ \end{tabular}
+ \caption{Tabela zawierająca obecne rozwiązania wraz z ważniejszymi elementami funkcjonalności.}
+\end{table}
+
+Zaprezentowane narzędzia pomimo wąskiego zakresu funkcjonalności (,,tylko'' zdalne składowanie danych, udostępnianie ich i praca nad nimi z innymi użytkownikami), są bardzo różnorodne pod względem architektury oraz dodatkowych funkcji, które oferują. Jednak według najlepszej wiedzy autora, obecnie nie istnieje na rynku rozwiązanie, które --- przy rozproszonej wymianie danych --- umożliwiałoby wymianę komentarzy między współpracownikami synchronizującymi dane.

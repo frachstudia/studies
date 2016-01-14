@@ -1,0 +1,127 @@
+@misc{dropbox,
+  howpublished = "\url{http://www.dropbox.com/}",
+}
+
+@misc{box,
+  howpublished = "\url{http://www.box.com/}",
+}
+
+@misc{sherly,
+  howpublished = "\url{http://www.sher.ly/}",
+}
+
+@misc{symform,
+  howpublished = "\url{http://www.symform.com/}",
+}
+
+@misc{btsync,
+  howpublished = "\url{http://www.getsync.com/}",
+}
+
+@misc{sugarsync,
+  howpublished = "\url{http://www.sugarsync.com}",
+}
+
+@misc{skydrive,
+  howpublished = "\url{http://onedrive.live.com}",
+}
+
+@misc{mediafire,
+  howpublished = "\url{http://www.mediafire.com/}",
+}
+
+@misc{googledrive,
+  howpublished = "\url{http://www.drive.google.com/}",
+}
+
+@misc{mega,
+  howpublished = "\url{http://mega.nz}",
+}
+
+@misc{cifs,
+  howpublished = "\url{http://technet.microsoft.com/en-us/library/cc939973.aspx}",
+}
+
+@misc{samba,
+  howpublished = "\url{http://www.samba.org}",
+}
+
+@misc{aes,
+  title = "Specification for the Advanced Encryption Standard (AES)",
+  howpublished = "\url{http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf}",
+}
+
+@misc{rscode,
+  author = "Jose R. C. Cruz",
+  title = "Error connection with Reed-Solomon",
+  howpublished = "[on-line] \url{http://www.drdobbs.com/testing/error-correction-with-reed-solomon/240157266}",
+  year = {2013},
+}
+
+@misc{angular,
+  howpublished = "\url{http://angularjs.org}",
+}
+
+@misc{python,
+  howpublished = "\url{http://python.org}",
+}
+
+@misc{django,
+  howpublished = "\url{http://djangoproject.com}",
+}
+
+@misc{rest,
+  howpublished = "\url{http://en.wikipedia.org/wiki/Representational_state_transfer}",
+}
+
+@misc{basicauth,
+  howpublished = "\url{http://en.wikipedia.org/wiki/Basic_access_authentication}",
+}
+
+@misc{dht,
+  howpublished = "\url{http://en.wikipedia.org/wiki/Distributed_hash_table}",
+}
+
+@misc{dropdownlist,
+  howpublished = "\url{http://en.wikipedia.org/wiki/Drop-down_list}",
+}
+
+@Book{Knuth:ct-a,
+  author =       "Donald E. Knuth",
+  title =        "The {\TeX}book",
+  publisher =    pub-AW,
+  address =      pub-AW:adr,
+  year =         "1986",
+  series =       "Computers and Typesetting",
+  ISBN =         "0-201-13447-0",
+  LCCN =         "Z253.4.T47 K58 1986",
+  pages =        "ix + 483",
+  bibdate =      "Wed Dec 15 10:36:52 1993",
+}
+
+@Book{Lamport:LDP85,
+  author =       "Leslie Lamport",
+  title =        "{\LaTeX} --- A Document Preparation System ---
+                 User's Guide and Reference Manual",
+  publisher =    pub-AW,
+  address =      pub-AW:adr,
+  year =         "1985",
+  ISBN =         "0-201-15790-X",
+  LCCN =         "Z253.4.L38 L35 1986",
+  pages =        "xiv + 242",
+  bibdate =      "Wed Dec 15 10:38:04 1993",
+}
+
+@misc{fcm-red,
+  author = "Zbyszko Kr{\'o}likowski and Maciej Drozdowski",
+  title = "{Jak pisać pracę dyplomową? Uwagi o formie. Zasady redakcji pracy dyplomowej.}",
+  howpublished = "[on-line] \url{www.fcm.put.poznan.pl/platon/dokumenty/dlaStudentow/egzaminDyplomowy/zasadyRedakcji}",
+  year = "2006",
+}
+
+@misc{mdro,
+  author = "Maciej Drozdowski",
+  title = "Jak pisać prace dyplomowe -- uwagi o formie",
+  howpublished = "[on-line] \url{http://www.cs.put.poznan.pl/mdrozdowski/dyd/txt/jak_mgr.html}",
+  year = {2006},
+}

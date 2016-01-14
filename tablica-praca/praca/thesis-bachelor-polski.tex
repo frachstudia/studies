@@ -1,0 +1,81 @@
+
+% Szkielet dla pracy inżynierskiej pisanej w języku polskim.
+
+\documentclass[polish,bachelor,a4paper,11pt,twoside]{ppfcmthesis}
+
+\usepackage[utf8]{inputenc}
+\usepackage[OT4]{fontenc}
+\usepackage{eurosym}
+\usepackage{latexsym}
+\usepackage{rotating}
+\usepackage{hyperref}
+\usepackage[font=small,labelsep=period]{caption}
+
+\usepackage[all]{nowidow}
+
+\usepackage{enumitem}
+\setlist[enumerate]{itemsep=0mm}
+\setlist[itemize]{itemsep=0mm}
+
+
+\DeclareUnicodeCharacter{00A0}{~}
+
+% Authors of the thesis here. Separate them with \and
+\author{
+   Mikołaj Błajek \album{99409} \and 
+   Filip Rachwalak \album{99523} \and 
+   Michał Słomkowski \album{100489}
+}
+\authortitle{}                                        % Do not change.
+\title{Sterownik matrycy świetlnej w~oparciu o~mikrokontroler AVR}                   % Note how we protect the final title phrase from breaking
+\ppsupervisor{dr~inż.~Roman Mielcarek} % Your supervisor comes here.
+\ppyear{2014}                                         % Year of final submission (not graduation!)
+
+\newcommand{\todo}[1]{}
+\renewcommand{\todo}[1]{{\color{red} TODO: {#1}}}
+
+\addto\captionspolish{\renewcommand{\figurename}{Rys.}}
+
+\linespread{1.3}
+
+\brokenpenalty10000\relax
+
+\begin{document}
+
+% Front matter starts here
+\frontmatter\pagestyle{empty}%
+\maketitle\cleardoublepage%
+
+% Blank info page for "karta dyplomowa"
+\thispagestyle{empty}\vspace*{\fill}%
+\begin{center}Tutaj przychodzi karta pracy dyplomowej;\\oryginał wstawiamy do wersji dla archiwum PP, w pozostałych kopiach wstawiamy ksero.\end{center}%
+\vfill\cleardoublepage%
+
+% Table of contents.
+\pagenumbering{Roman}\pagestyle{ppfcmthesis}%
+\tableofcontents* \cleardoublepage%
+
+% Main content of your thesis starts here.
+\mainmatter%
+\input{chapters/0-Wstep.tex}
+\input{chapters/1-PodstawyTeoretyczne.tex}
+\input{chapters/2-ProjektSystemu.tex}
+\input{chapters/3-ImplementacjaSystemu.tex}
+\input{chapters/4-Zakonczenie.tex}
+
+% Bibliography (books, articles) starts here.
+\bibliographystyle{plplain}{\raggedright\sloppy\small\bibliography{chapters/bibliografia}}
+
+% All appendices and extra material, if you have any.
+\cleardoublepage\appendix%
+
+\input{chapters/5-InstrukcjaUzytkownika.tex}
+
+\input{chapters/Dodatek-Zasilacz.tex}
+
+\input{chapters/Dodatek-ZawartoscPlytyCD.tex}
+
+% Colophon is a place where you should let others know about copyrights etc.
+\ppcolophon
+
+\end{document}

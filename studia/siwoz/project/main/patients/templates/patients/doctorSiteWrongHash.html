@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html ng-app="patientsApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/notify.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/style.css' %}" />
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div class="container-fluid" id="mainBody" style="display: none;">
+
+    <!-- HEADER CONTAINER -->
+    <div id="headerDiv">
+        <h3>Wyniki pacjenta {{ username }} ({{ sex }})</h3>
+    </div>
+
+    <div id="mainDiv" style="margin-top:50px;">
+        <h4>Nie ma takiego widoku.</h4>
+    </div>
+
+</div>
+
+    <script type="text/javascript" src="{% static 'patients/scripts/jquery-2.1.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/angular.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/angular-resource.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/angular-checklist-model.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/dataTables.bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/bootstrap-select.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/notify.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/script.js' %}"></script>
+    <script type="text/javascript" src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
+
+</body>
+</html>

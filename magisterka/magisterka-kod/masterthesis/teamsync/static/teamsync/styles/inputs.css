@@ -1,0 +1,113 @@
+/* ######################################### BUTTONS ######################################### */
+
+button {
+    background: rgba(255,255,255,0.2);
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    display: block;
+    color: black;
+    border: solid lightgray 1px;
+    padding: 2px 5px;
+}
+
+button:hover {
+    background: rgba(255,255,255,0.4);
+}
+
+.smallbutton {
+    height: 24px;
+    line-height: 1.4;
+}
+
+.bigbutton {
+    height: 30px;
+    line-height: 1.8;
+}
+
+/* ######################################### SELECT ######################################### */
+
+select {
+    background: rgba(255,255,255,0);
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    display: block;
+    color: black;
+    border: solid lightgray 1px;
+    padding: 2px 5px;
+    -webkit-appearance: none;
+}
+
+select:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+select:after {
+    content: "R";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* ######################################## TEXTAREA ######################################## */
+
+textarea {
+    background: rgba(255,255,255,0.2);
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    display: block;
+    color: black;
+    border: solid lightgray 1px;
+    padding: 2px 5px;
+    -webkit-appearance: none;
+}
+
+textarea:focused {
+    border: solid black 1px;
+}
+
+/* ######################################### INPUTS ######################################### */
+
+input[type="text"] {
+    background: rgba(255,255,255,0.2);
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    display: block;
+    color: white;
+    border: solid lightgray 1px;
+    padding: 2px 5px;
+    -webkit-appearance: none;
+}
+
+input[type="text"]:hover {
+    background: rgba(255,255,255,0.4);
+}
+
+input[type="radio"] {
+    content: url("../img/radiooff.png");
+}
+
+input[type="radio"]:checked {
+    content: url("../img/radioon.png");
+}
+
+/* ########################################## ICONS ######################################### */
+
+.menuIcon {
+    float: right;
+    border-radius: 5px;
+    margin-left: 5px;
+}
+
+.menuIcon:hover {
+    background: rgba(255,255,255,.45);
+}
+
+.menuIcon img {
+    width: 24px;
+    height: 24px;
+}

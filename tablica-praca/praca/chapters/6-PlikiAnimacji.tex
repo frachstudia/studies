@@ -1,0 +1,187 @@
+\section{pliki z~animacjami}
+Ekran obsługuje 2 formaty plików: M2F i~MXF.~Rodział ten jest poświęcony opisowi tych plików.
+
+
+\subsection{Założenia projektowe dla plików M2F}
+\begin{enumerate}
+\item Możliwość wypisania aktualnej daty i~czasu
+\item Możliwość wyświetlania grafiki
+\item Możliwość wyświetlania tekstu i~grafiki jednocześnie
+\item Dotatkowe możliwości, między innymi wyświetlanie w~pionie
+\item Różne czcionki
+\item Mały rozmiar plików
+\item Mała wymagana moc obliczeniowa przy odtwarzaniu
+\item Plik może nie być czytelny dla człowieka
+\end{enumerate}
+
+\subsection{Ogólny opis formatu}
+W ramach realizacji założeń powstał format M2F.~Nazwa ma sugerować, że opisuje on to samo, co plik projektu MMF, tylko w~inny sposób. Cała metoda wyświetlania bazuje przede wszystkim na buforze tła i~opisie liter. Co pewien czas jest generowana nowa klatka. Na początku wczytywane są komendy sterujące, modyfikujące tło, opis liter. Potem tworzy się kopię tła i~nanosi na nią po kolei zdefiniowane litery. Litery mogą się nachodzić na siebie nadpisując się. Gotowa klatka zostaje narysowana. W~kolejnych podpunktach znajdują się opisy poszczególnych elementów formatu oraz bardziej szczegółowy opis.
+
+\subsection{Komendy}
+\subsubsection{Komendy sterujące}
+Komendy sterujące jako pierwszy bajt mają wartość 0. Drug bajt jest numerem komendy. Obecnie jest dostępnych 21 komend:
+\begin{itemize}
+\item 0 – koniec pliku (plik po zakończeniu jest odczytywany jako ciąg zer, czyli nie musi zawierać tej komendy),
+\item 1 – koniec danych dla klatki, czyli odczekaj 1 klatkę
+\item 2 – odczekaj 2 klatki
+\item 3 – odczekaj 5 klatek
+\item 4 – odczekaj 10 klatek
+\item 5 – odczekaj 20 klatek
+\item 6 – odczekaj 50 klatek
+\item 7 – odczekaj 100 klatek
+\item 8 – czekaj do końca sekundy
+\item 9 – czekaj do końca minuty
+\item 10 – czekaj do końca godziny
+\item 11 – czekaj do końca dnia
+\item 12 – nie rysuj nic
+\item 13 – rysuj tylko litery
+
+(domyślnie animacja rozpoczyna się z~takim ustawieniem)
+\item 14 – rysuj tylko tło
+15 – rysuj litery i~tło
+\item 16 – gdy tło nie jest rysowane, rysuj na pustej klatce
+
+(domyślnie animacja rozpoczyna się z~takim ustawieniem)
+\item 17 – gdy tło nie jest rysowane, rysuj na wypełnionej klatce
+\item 18 – modyfikacja tła
+
+(składnia jest opisana poniżej)
+\item 19 – czekaj na przycisk
+\item 20 – przewiń plik do początku
+
+(ustawienia nie są przywracane do stanu początkowego)
+\end{itemize}
+
+\subsubsection{Składnia instrukcji modyfikującej tło}
+Odczytywane są kolejne 2 bajty z~pliku, opisują one położenie modyfikowanego obrazu. Modyfikuje się obraz w~podziale na obszary o~wymiarach i~położeniu będących wielokrotnościami liczby 16. Pierwszy bajt podaje współrzędne początkowe, drugi współrzędne końcowe. Z~założenia bardziej znaczące bity oznaczają położenie w~pionie, jednak ze względu na wysokość wyświetlacza będącą wysokością. Wartości z~tych bajtów są mnożone przez 16. Odczytanie wartości 0x01 i~0x13 oznacza, że zmodyfikowany zostanie obszar o~współrzędnej X od 16 do 48 i~o~współrzędnej Y od 0 do 16. Obszar ten zawiera 512 pikseli, czyli jest opisany 512 bitami, czyli 64 bajtami. Każde 2 bajty stanowią szesnastobitową kolumnę obrazu, pierwszy bajt jest bardziej znaczący. Na ekranie piksele na dole odpowiadają najbardziej znaczącej wartości. Dla przykładowych bajtów 0x33 i~0xf0 postanie kolumna (od dołu) 0011001111110000. Gdyby obszar był wyższy niż 16 pikseli, dane byłyby w~pasach, na przykład najpierw X od 16 do 48, Y od 0 do 16; potem X od 16 do 48, Y od 16 do 32.
+
+\subsubsection{Komendy modyfikujące litery}
+Komendy tego rodzaju rozpoczynają się bajtem większym od zera, oznaczającym numer litery, po który jest numer parametru i~jego nowa wartość. Można modyfikować następujące parametry:
+\begin{itemize}
+\item 0 – kod znaku
+
+(opis użytego kodowania znajduje się poniżej)
+\item 1 – położenie w~poziomie
+
+(może być ujemne, liczone od lewej strony)
+\item 2 – położenie w~pionie
+
+(może być ujemne, liczone od góry)
+\item 3 – tryb wyświetlania
+
+(opis trybów znajduje się poniżej)
+\item 4 – czcionka
+
+(opis czcionek poniżej 1.7)
+\item 5 – przycięcie znaku w~poziomie, od ile
+\item 6 – przycięcie znaku w~pionie, od ile
+\item 7 – przycięcie znaku w~poziomie, do ile
+\item 8 – przycięcie znaku w~pionie, do ile
+
+(opis przycięć znajduje się poniżej)
+\end{itemize}
+
+\subsection{Kodowanie znaków}
+Użyte kodowanie w~większości jest zgodne z~ASCII, to znaczy od znaku 30 (spacja) do 126 (tylda). Z~założenia to kodowanie zawiera wszystkie znaki powszechnie używane w~języku polskim. Zawiera róznież aktwne znaki słóżące do opisu aktualnej daty i~czasu. Oprócz kodowania zgodnego z~ASCII, w~ramach pozostałych kodów są umieszczone następujące znaki:
+\begin{itemize}
+\item 0 – liczba dziesiątek godzin w~systemie 24-godzinnym (0 – 23), spacja zamiast zera
+\item 1 – liczba jedności godzin
+\item 2 – liczba dziesiątek minut
+\item 3 – liczba jedności minut
+\item 4 – liczba dziesiątek sekund
+\item 5 – liczba jedności sekund
+\item 6 – liczba dziesiątek numeru dnia w~miesiącu (1 – X), spacja zamiast zera
+\item 7 – liczba jedności numeru dnia w~miesiącu
+\item 8 – liczba dziesiątek numeru miesiąca (1 – 12)
+\item 9 – liczba jedności numeru miesiąca
+\item 10 – liczba dziesiątek roku
+\item 11 – liczba jedności roku
+\item 12 – symbol stopnia – \( ^{\circ} \)
+\item 13 – symbol euro – \euro
+\item \begin{tabular}{ccccccccc}
+14 – Ą & 15 – Ć & 16 – Ę & 17 – Ł & 18 – Ń & 19 – Ó & 20 – Ś & 21 – Ź & 22 – Ż \\
+23 – ą & 24 – ć & 25 – ę & 26 – ł & 27 – ń & 28 – ó & 29 – ś & 30 – ź & 31 – ż \\
+\end{tabular} 
+\item 127 – pusty znak – \( \Box \)
+\end{itemize}
+
+\subsection{Tryby wyświetlania znaków}
+Dostępne jest wiele możliwości wyświetlenia znaku. Poszczególne bity trybu opisują modyfikacje przy rysowaniu. Bity są opisane od najmniej znaczącego (pierwszy jest bitem jedności). Bit 1. i~5. są objaśnione na końcu, działają w~sposób zależny od siebie.
+\begin{itemize}
+\item bit 2. – litera zostanie przetransponowana, przerzucona względem głównej przekątnej
+\item bit 3. – litera zostanie przerzucona w~poziomie
+\item bit 4. – litera zostanie przerzucona w~pionie
+\item bit 1. i~bit 5. – tło oznacza tło dla danej litery, czyli bieżącą klatkę, na której mogą być narysowane wcześniejsze litery.
+\begin{itemize}
+\item bit 1. wyzerowany i~bit 5. wyzerowany
+
+Litery są nanoszone przez logiczną sumę, mogą tylko zmienić ciemne tło na jasne. Każdy piksel jest ustawiany według wyniku operacji: tło LUB litera.
+\item bit 1. ustawiony i~bit 5. wyzerowany
+
+Litery są nanoszone przez logiczny iloczyn z~negatywem litery. Można to określić jako odjęcie od dotychczasowego tła. Litera może tylko zmienić jasne tło na ciemne, każdy piksel jest ustawiany według wyniku operacji: tło I~(NIE litera).
+\item bit 1. wyzerowany i~bit 5. ustawiony
+
+Wartości pikseli z~litery są nanoszone niezależnie od tła. Ustawienie znaku spacji oznacza że znak w~ogóle nie jest rysowany, co jest nadrzędne względem ustawień trybu.
+\item bit 1. wyzerowany i~bit 5. wyzerowany
+
+Litery są nanoszone jako alternatywa wykluczająca z~tłem. Tam gdzie litera jest jasna, wartość tła jest negowana.
+\end{itemize}
+\end{itemize}
+
+1.11
+\subsection{Użyte czcionki}
+Zastosowano 3 czcionki, o~identyfikatorach 0, 1 i~2. Wszystkie litery czcionek są wpisane w~kwadrat o~danym rozmiarze. Oznacza to, że mają stałą szerokość, ale nie oznacza, ze nie można ustawić znaków bliżej i~zależnie od kształtu litery, uzyskując czcionkę proporcjonalną.
+
+Czcionka 0 ma rozmiar 16px. W~tym projekcie oznacza to, że każda litera mieści się w~kwadracie 16 na 16 pikseli. Głównym założeniem przy tworzeniu tej czcionki, było żeby uzyskać możliwie dużą czytelność. Zostało to uzyskane przez stworzenie wielkich liter i~cyfr które mają wysokość 16 pikseli. Z~założenia gdy litery tą czcionką są wyświetlane, stanowią jedyną linię. Nie jest więc problemem, że 2 line takiego tekstu jedna nad drugą by się stykały . Powstałym problemem są więc różnego rodzaju „kropki”, „kreski” i~„ogonki” nie mieszczące się normalnie między linią podstawową fonta, a~linią górną. Problematyczne znaki zostały więc „ściśnięte”, co powoduje, że mogą wyglądać gorzej i~być mniej czytelne. 
+
+Czcionka 1 ma rozmiar 8px. Celem utworzenia tej czcionki była możliwość wyświetlenia możliwie czytelnych dwóch linii tekstu. Wielkie litery i~cyfry mają jeden piksel odstępu od góry. Znaki z~elementami wystającymi w~górę korzystają z~tej przestrzeni, jak również stanowi ona odstęp między liniami. Tak jak w~czcionce 0, linia dolna i~linia podstawowa są sobie równe.
+
+Czcionka 2 ma rozmiar 12px. Bazuje na czcionce Fixedsys zaprojektowanej przez Microsoft®. Celem zastosowania tej czcionki jest wypełnienie luki w~rozmiarach między poprzednimi czcionkami. Można przypuszczać, że przy opracowywaniu tej czcionki wygląd był ważnym czynnikiem, a~jednocześnie jest ona jednocześnie bardzo czytelna. Niektóre znaki w~tej czcionce były za wysokie i~zostały obniżone. Przez to również w~niej linia podstawowa nie jest zachowana we wszystkich znakach.
+
+\subsection{Zasady przycięć znaków}
+Przycięcia OD i~DO w~pionie jak i~w~poziomie odnoszą się do pikseli adresowanych od 0 do 16 (dla czcionki o~wysokości 16) i~są liczone względem współrzędnych litery. Gdy nie mają przycinać znaku, mają wartość OD = 0 i~DO = 15. Zwiększenie wartości OD powoduje przycięcie od góry, zmniejszenie wartości DO, przycięcie od dołu. W~związku z~tym, gdy wartości OD i~DO są równe, zostaną pozostawione tylko piksele o~tym adresie. Gdy wartość OD jest większa od wartości DO, z~czcionki pozostaną 2 pasy, od 0 do OD i~od DO do 15. Tym samym wartości  OD = 15 i~DO = 0 oznaczają, że pozostaną piksele adresie 0 i~o~adresie 15.
+
+\subsection{Szczegółowy opis działania}
+\subsubsection{Stan początkowy}
+\begin{enumerate}
+\item tło jest wyczyszczone – ustawiane na ciemne
+\item rysowanie liter jest włączone
+\item rysowanie tła jest wyłączone
+\item gdy nie ma tła, zaczyna się od ciemnej klatki
+\item ustawienie początkowe dla liter:
+\begin{enumerate}
+\item wszystkie litery są spacjami (kod 32)
+\item przycięcia są ustawione na OD = 0 i~DO = maksymalna wartość
+\item tryb wyświetlania ustawiony na 0, czyli suma logiczna z~tłem, bez transpozycji o~przerzuceń
+\item czcionka ustawiona na czcionkę 0, 16 pikseli
+\end{enumerate}
+\end{enumerate}
+algorytm:
+\begin{enumerate}
+\item Czytaj komendy aż do natrafienia na komendę wymuszającą czekanie.
+\item Zależnie od ustawień, kopiuj tło do bieżącej klatki, lub ustaw ją na pełną bądź pustą.
+\item Po kolei, dla każdej litery o~numerze od 1 do 127 (litery mają numery od  wykonuj zależnie od ustawień (kolejność ma znaczenie):
+\begin{enumerate}
+\item Nadrzędną metodą ukrycia znaku jest ustawienie jego kodu na 32, czyli spację. Nawet w~trybie nadpisywania tła, taki znak zostanie pominięty.
+\item Transpozycja.
+\item Przerzucenie w~poziomie o~pionie.
+\item Przycięcia w~poziomie i~pionie.
+\item Narysuj literę modyfikując bieżącą klatkę
+\end{enumerate}
+\item Przekaż bieżącą klatkę funkcji rysującej
+\item Czekaj do końca klatki, do końca 25~ms które powinna trwać.
+\item Jeżeli nie nastąpiło oczekiwane zdarzenie (np. przycisk, zmiana godziny, narysowanie 100 klatek) przejdź do punktu 2.
+\item Jeżeli nastąpiło oczekiwane zdarzenie przejdź do punktu 1.
+\end{enumerate}
+
+\subsection{Przykłady plików}
+tudu
+
+\subsection{Podsumowanie i~możliwości rozwoju}
+Pliki w~formacie M2F pozwalają wyświetlić bardzo różnorodne dane. Format może zostać rozszerzony o~kolejne właściwości znaków i~komendy, również takie, jak kolor znaku, obsługa większych obszarów, modyfikacja grup znaków, skoki warunkowe i~wiele innych. Do kodowania znaków również można dodać kolejne dane, na przykład dzień tygodnia i~temperaturę. Pliki M2F są jednak dość skomplikowane. Trudno jest uzyskać w~tym formacie nawet nieskomplikowane animacje w~sposób zautomatyzowany. Zaawansowane wykorzystanie jest bardzo skomplikowane. Z~kolei ręczne tworzenie tych plików, w~edytorze szesnastkowym, jest bardzo czasochłonne i~niepraktyczne. 
+\subsection{Pliki MXF}
+\subsubsection{Założenia}
+W pliku M2F tak podstawowy efekt jak przesuwający się w~poziomie napis wymaga wielu operacji, czyli w~każdej klatce zmian położenia każdej litery, oraz przekładania wychodzących liter na początek. Przesunięcie tekstu o~jeden piksel wymaga około 50 bajtów. W~związku z~tym został określony drugi format, czyli MXF.~Jego nazwa ma nawiązywać do formatu tekstowego TXT. W~przeciwieństwie do poprzednio opisanego formatu, ten format jest bardzo prosty.
+
+\subsubsection{Opis}
+W tym formacie można wyświetlać tylko i~wyłącznie przesuwający się w~lewo tekst. Kolejne znaki są czytane z~pliku i~wsuwane od prawej strony. Wykorzystana jest czcionka 0, o~wysokości 16 pikseli. Kodowanie znaków jest takie samo jak w~plikach M2F (opisane w~punkcie 1.5), czyli plik może zawierać aktualną godzinę i~datę. Ze względu na sposób implementacji, w~którym narysowane znaki nie są później modyfikowane, nie ma większego sensu umieszczanie liczby jedności sekund. Zamiast tego znaku (o~kodzie 5) jest synchronizacja zegara z~zegarem czasu rzeczywistego. Gdyby zegar aktualizował się samoczynnie wyświetlona godzina mogłaby być niespójna, zmienić się pomiędzy wstawieniem poszczególnych liter.

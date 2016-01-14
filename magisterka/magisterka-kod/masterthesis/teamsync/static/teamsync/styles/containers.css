@@ -1,0 +1,1081 @@
+@font-face {
+    font-family: 'Sansation';
+    src: url('../fonts/sansation.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    font-size: 12px;
+    font-family: 'Sansation';
+}
+
+a:focus, a:active,
+button::-moz-focus-inner,
+input[type="reset"]::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner,
+select::-moz-focus-inner,
+input[type="file"] > input[type="button"]::-moz-focus-inner {
+    border: 0;
+    outline : 0;
+}
+
+input[type="radio"] {
+    content: url("../img/radiooff.png");
+}
+
+input[type="radio"]:checked {
+    content: url("../img/radioon.png");
+}
+
+input[type="text"] {
+    background: rgba(255,255,255,.3);
+    border-radius: 5px;
+    border: solid 1px lightgrey;
+    color: black;
+    padding: 2px 5px;
+    height: 23px;
+}
+
+input[type="text"]:focus {
+    border: solid 1px black;
+}
+
+input[type="text"]::-webkit-input-placeholder { /* WebKit browsers */
+    color:    black;
+}
+input[type="text"]:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    black;
+   opacity:  0.8;
+}
+input[type="text"]::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    black;
+   opacity:  0.8;
+}
+input[type="text"]:-ms-input-placeholder { /* Internet Explorer 10+ */
+   color:    black;
+}
+
+textarea {
+    background: rgba(255,255,255,.3);
+    border-radius: 5px;
+    border: solid 1px lightgrey;
+    padding: 2px 5px;
+}
+
+body {
+    background: url("../img/background.png") repeat;
+    font-family: 'Sansation', Calibri, Verdana, sans-serif;
+}
+
+#maincontainer {
+    color: white;
+    width: 100%;
+    min-height: 600px !important;
+    height: 100%;
+}
+
+#headerbar {
+    position: absolute;
+    left: 40px;
+    right: 40px;
+    top: 10px;
+    height: 60px;
+    min-width: 900px;
+    background: rgba(255,255,255,.25);
+    border-radius: 10px;
+}
+
+#sidebar {
+    position: absolute;
+    color: lightgray;
+    top: 80px;
+    left: 40px;
+    bottom: 60px;
+    width: 220px;
+    background: rgba(255,255,255,.25);
+    border-radius: 10px;
+    padding: 15px 10px;
+    min-height: 400px;
+    overflow-x: hidden;
+}
+
+#sidebar p {
+    width:180px;
+    word-wrap: break-word;
+}
+
+#usersDiv {
+    height: -moz-calc(100% - 80px);
+    height: -webkit-calc(100% - 80px);
+    height: calc(100% - 80px);
+}
+
+#folderInfo {
+    height: -moz-calc(100% - 210px);
+    height: -webkit-calc(100% - 210px);
+    height: calc(100% - 210px);
+}
+
+#usersTable {
+    cellspacing: 5;
+}
+
+#usersTable img {
+    width: 25px;
+    height: 25px;
+}
+
+#maincontent {
+    position: absolute;
+    top: 80px;
+    left: 270px;
+    right: 40px;
+    bottom: 60px;
+    min-width: 670px;
+    min-height: 400px;
+    background: rgba(255,255,255,.25);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+#filesArea {
+    width: 43%;
+    background: rgba(255,255,255,.25);
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    bottom: 10px;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+#filesHeader {
+    width: 100% - 20px;
+    height: 30px;
+    margin-bottom: 10px;
+    padding: 3px;
+}
+
+#pathArea {
+    float: left;
+    line-height: 24px;
+    color: black;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: -moz-calc(100% - 100px);
+    max-width: -webkit-calc(100% - 100px);
+    max-width: calc(100% - 100px);
+}
+
+#usersButton {
+    float: right;
+    margin-right: 5px;
+}
+
+#usersButton:hover {
+    background: rgba(255,255,255,.45);
+    border-radius: 5px;
+}
+
+#sortButton {
+    float: right;
+    margin-right: 15px;
+}
+
+#sortButton:hover {
+    background: rgba(255,255,255,.45);
+    border-radius: 5px;
+}
+
+#sortThreadsContextMenu {
+    background: url("../img/background.png");
+    z-index: 1000;
+    position: absolute;
+    top: 13px;
+    padding: 5px;
+    width: 200px;
+    left: -moz-calc(100% - 115px);
+    left: -webkit-calc(100% - 115px);
+    left: calc(100% - 115px);
+    border-radius: 5px;
+}
+
+#sortThreadsContextMenu label {
+    display: block;
+    width: 100%;
+    float: left;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+}
+
+#sortThreadsContextMenu label div {
+    padding: 0 5px;
+}
+
+#sortThreadsContextMenu div:hover {
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+}
+
+#sortThreadsContextMenu label:nth-child(4) {
+    margin-bottom: 10px;
+}
+
+#dominatingUsersContextMenu {
+    background: url("../img/background.png");
+    z-index: 1000;
+    position: absolute;
+    top: 13px;
+    padding: 5px;
+    width: 210px;
+    left: -moz-calc(100% - 145px);
+    left: -webkit-calc(100% - 145px);
+    left: calc(100% - 145px);
+    border-radius: 5px;
+}
+
+#dominatingUsersContextMenu label {
+    display: block;
+    width: 100%;
+    float: left;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0 5px;
+}
+
+#dominatingUsersContextMenu label div {
+    padding: 0 5px;
+}
+
+#dominatingUsersContextMenu div:hover {
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+}
+
+#dominatingUsersContextMenu select.form-control {
+    height: 20px;
+    font-size: 12px;
+    padding: 0 5px;
+    float: left;
+    width: 100px;
+    margin: 0 55px;
+}
+
+#backButton {
+    float: right;
+    margin-right: 5px;
+}
+
+#backButton:hover {
+    background: rgba(255,255,255,.45);
+    border-radius: 5px;
+}
+
+#homeButton {
+    float: right;
+}
+
+#homeButton:hover {
+    background: rgba(255,255,255,.45);
+    border-radius: 5px;
+}
+
+#viewButton {
+    float: right;
+    margin-right: 15px;
+}
+
+#viewButton:hover {
+    background: rgba(255,255,255,.45);
+    border-radius: 5px;
+}
+
+#filesView {
+    position: absolute;
+    border-radius: 5px;
+    border-color: darkgray;
+    border-width: 1px;
+    border-style: solid;
+    padding: 5px;
+    top: 50px;
+    left: 10px;
+    bottom: 40px;
+    right: 10px;
+}
+
+.filesSubUl {
+    list-style-type: none;
+    background: rgba(255,255,255,.2);
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 5px auto;
+    width: 80%;
+}
+
+.filesLiThreads div {
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+
+.filesLiThreads div:hover {
+    background: rgba(255,255,255,.3);
+}
+
+.filesSubLi {
+    text-align: center;
+    border-radius: 5px;
+    width: 150px;
+    margin: 0 auto;
+    line-height: 2;
+}
+
+.filesSubLi:hover {
+    background: rgba(255,255,255,.3);
+}
+
+.filesLi div {
+    text-align: center;
+    border-radius: 5px;
+    width: 180px;
+    height: 30px;
+    line-height: 2;
+    margin: 0 auto;
+}
+
+.filesLi div:hover {
+    background: rgba(255,255,255,.3);
+}
+
+#checkBoxBar {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 20px;
+    bottom: 10px;
+    margin: 0 10px;
+}
+
+#checkBoxBar label {
+    font-weight: normal;
+    display: inline-block;
+    line-height: 25px;
+    vertical-align: middle;
+}
+
+#commentsArea {
+    width: 53%;
+    background: rgba(255,255,255,.25);
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+#commentsHeader {
+    width: 100% - 20px;
+    height: 30px;
+    margin-bottom: 10px;
+    padding: 3px;
+}
+
+#threadTitleArea {
+    font-size: 12px;
+    color: black;
+    float: left;
+    line-height: 2;
+    height: 30px;
+    max-width: -moz-calc(100% - 100px);
+    max-width: -webkit-calc(100% - 100px);
+    max-width: calc(100% - 100px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#commentsHeaderText {
+    background: rgba(255,255,255,0.22);
+    border-radius: 3px;
+    margin-right: 5px;
+    padding: 2px 5px;
+}
+
+#globalButton {
+    float: right;
+    padding: 2px;
+}
+
+#globalButton:hover {
+    background: rgba(255,255,255,.45);
+    border-radius: 5px;
+}
+
+#globalCommentsContextMenu {
+    background: url("../img/background.png");
+    z-index: 1000;
+    position: absolute;
+    top: 13px;
+    right: 40px;
+    padding: 5px;
+    width: 250px;
+    border-radius: 5px;
+}
+
+#globalCommentsContextMenu label {
+    display: block;
+    width: 100%;
+    float: left;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0 5px;
+    text-align: center;
+}
+
+#globalCommentsContextMenu select.form-control {
+    height: 20px;
+    font-size: 12px;
+    padding: 0 5px;
+    float: left;
+    width: 200px;
+    margin: 5px 25px;
+}
+
+#userViewButton {
+    float: right;
+    padding: 2px;
+    margin-right: 5px;
+}
+
+#userViewButton:hover {
+    background: rgba(255,255,255,.45);
+    border-radius: 5px;
+}
+
+#userViewContextMenu {
+    background: url("../img/background.png");
+    z-index: 1000;
+    position: absolute;
+    top: 13px;
+    right: 70px;
+    padding: 5px;
+    width: 250px;
+    border-radius: 5px;
+}
+
+#showStatisticsButton {
+    float: right;
+    padding: 2px;
+    margin-right: 5px;
+}
+
+#showStatisticsButton:hover {
+    background: rgba(255,255,255,.45);
+    border-radius: 5px;
+}
+
+#userViewContextMenu label {
+    display: block;
+    width: 100%;
+    float: left;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0 5px;
+    text-align: center;
+}
+
+#userViewContextMenu select.form-control {
+    height: 20px;
+    font-size: 12px;
+    padding: 0 5px;
+    float: left;
+    width: 200px;
+    margin: 5px 25px;
+}
+
+#searchButton {
+    float: right;
+    margin-right: 5px;
+    padding: 2px;
+}
+
+#searchButton:hover {
+    background: rgba(255,255,255,.45);
+    border-radius: 5px;
+}
+
+#searchTextArea {
+    z-index: 1000;
+    position: absolute;
+    top: 13px;
+    right: 160px;
+    width: 150px;
+}
+
+#searchTextArea label {
+    color: black;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+#commentsView {
+    position: absolute;
+    border-radius: 5px;
+    border-color: darkgray;
+    border-width: 1px;
+    border-style: solid;
+    padding: 5px;
+    top: 50px;
+    left: 10px;
+    bottom: 40px;
+    right: 10px;
+    color: black;
+}
+
+#commentsView ul {
+    list-style-type: none;
+}
+
+.avatarArea {
+    float: left;
+    margin: 15px 5px 0 0;
+    width: 30px;
+    clear: both;
+}
+
+.antyavatarArea {
+    float: left;
+    width: -moz-calc(100% - 35px);
+    width: -webkit-calc(100% - 35px);
+    width: calc(100% - 35px);
+    margin-bottom: 20px;
+}
+
+#commentReplyDiv {
+    border-top: solid darkgray 1px;
+    padding-top: 20px;
+}
+
+.authorArea {
+    float: left;
+    margin-left: 5px;
+    overflow: hidden;
+}
+
+.timeArea {
+    float: right;
+    margin-right: 5px;
+}
+
+.historyOfChangesIconDiv {
+    float: right;
+    margin-right: 2px;
+    padding: 1px 2px;
+    line-height: 11px;
+}
+
+.historyOfChangesIconDiv:hover {
+    background: rgba(255,255,255, 0.5);
+    border-radius: 2px;
+}
+
+.editIconDiv {
+    float: right;
+    margin-right: 2px;
+    padding: 1px 2px;
+    line-height: 11px;
+}
+
+.editIconDiv:hover {
+    background: rgba(255,255,255, 0.5);
+    border-radius: 2px;
+}
+
+.commentArea {
+    font-size: 11px;
+    border-radius:5px;
+    float: left;
+    width: 100%;
+    min-height: 16px;
+    padding: 3px 6px;
+    background: rgba(255,255,255,0.3);
+}
+
+.commentEditArea textarea {
+    width: 100%;
+    resize: none;
+}
+
+#commentEditButton {
+    display: block;
+    height: 24px;
+    width: 50px;
+    padding: 2px 10px;
+    background: rgba(255,255,255,.3);
+    color: black;
+    border-color: lightgray;
+    font-size: 12px;
+    float: left;
+    margin-top: 2px;
+}
+
+#commentEditButton:hover {
+    background: rgba(255,255,255,.5);
+}
+
+#cancelEditButton {
+    display: block;
+    height: 24px;
+    width: 50px;
+    padding: 2px 10px;
+    background: rgba(255,255,255,.3);
+    color: black;
+    border-color: lightgray;
+    font-size: 12px;
+    float: left;
+    margin: 2px 0 0 5px;
+}
+
+#cancelEditButton:hover {
+    background: rgba(255,255,255,.5);
+}
+
+#historyView {
+    width: 80%;
+    margin: 0 auto;
+    background: rgba(255,255,255,.2);
+    margin-bottom: 15px;
+    padding: 5px;
+    border-radius: 5px;
+    clear: both;
+}
+
+#cancelHistoringButton {
+    display: block;
+    height: 24px;
+    width: 120px;
+    padding: 2px 10px;
+    background: rgba(255,255,255,.3);
+    color: black;
+    border-color: lightgray;
+    font-size: 12px;
+    margin: 0 auto;
+}
+
+#cancelHistoringButton:hover {
+    background: rgba(255,255,255,.5);
+}
+
+.historyRow {
+    margin-bottom: 10px;
+    line-height: 1.1;
+}
+
+.additionalInfoArea1 {
+    margin-top: 2px;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    float: left;
+}
+
+.additionalInfoArea2 {
+    margin-top: 2px;
+    text-decoration: none;
+    color: black;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    float: left;
+}
+
+.additionalInfoArea2:hover {
+    text-decoration: none;
+    background: rgba(255,255,255,0.3);
+}
+
+#newCommentLi {
+    width: 100%;
+    text-align: center;
+    font-style: normal;
+    color: black;
+    margin: 0px 10px;
+}
+
+#newCommentLi a {
+    text-decoration: none;
+    color: black;
+}
+
+#commentTextArea {
+    font-weight: normal;
+    color: black;
+    font-size: 12px;
+    padding: 2px 5px;
+    width: 100%;
+    height: 23px;
+    resize: none;
+    margin-bottom: 5px;
+    background: rgba(255,255,255,.3);
+}
+#commentTextArea::-webkit-input-placeholder { /* WebKit browsers */
+    color:    black;
+}
+#commentTextArea:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    black;
+   opacity:  0.8;
+}
+#commentTextArea::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    black;
+   opacity:  0.8;
+}
+#commentTextArea:-ms-input-placeholder { /* Internet Explorer 10+ */
+   color:    black;
+}
+
+#writeCommentButton {
+    display: block;
+    height: 24px;
+    width: 50px;
+    padding: 2px 10px;
+    background: rgba(255,255,255,.3);
+    color: black;
+    border-color: lightgray;
+    font-size: 12px;
+    float: left;
+}
+
+#writeCommentButton:hover {
+    background: rgba(255,255,255,.5);
+}
+
+#statisticsTitle {
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+#statsTable {
+    margin: 0 auto;
+    width: 80%;
+    text-align: center;
+}
+
+#statsTable thead tr {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#newThreadArea {
+    background: rgba(255,255,255,.15);
+    border-radius: 5px;
+    padding: 5px;
+    height: 100%;
+}
+
+#newThreadArea div {
+    margin-bottom: 5px;
+}
+
+#newThreadTitle {
+    width: 200px;
+    text-align: center;
+    margin: 0 auto;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.threadInputLine {
+    height: 23px;
+    clear: both;
+}
+
+.labelDiv {
+    width: 80px;
+    text-align: right;
+    height: 23px;
+    line-height: 2;
+    float: left;
+    font-weight: bold;
+}
+
+.inputDiv {
+    height: 23px;
+    margin-left: 5px;
+    float: left;
+    line-height: 2;
+    width: -moz-calc(100% - 90px);
+    width: -webkit-calc(100% - 90px);
+    width: calc(100% - 90px);
+}
+
+#newThreadTitleInput {
+    width: 200px;
+}
+#newThreadTitleInput:focus {
+    border: solid 1px black;
+    outline: none;
+}
+
+#newThreadFileaboutArea {
+    width: 45%;
+}
+
+#newThreadCommentTextArea {
+    font-weight: normal;
+    color: black;
+    font-size: 12px;
+    padding: 2px 5px;
+    width: 100%;
+    resize: none;
+    margin-bottom: 5px;
+    background: rgba(255,255,255,.3);
+}
+
+#newThreadCommentTextArea:focus {
+    border: solid 1px black;
+    outline: none;
+}
+
+#writeNewThreadButton {
+    display: block;
+    height: 24px;
+    width: 100px;
+    padding: 2px 10px;
+    background: rgba(255,255,255,.3);
+    color: black;
+    border-color: lightgray;
+    font-size: 12px;
+    margin: 0 auto;
+}
+
+#writeNewThreadButton:hover {
+    background: rgba(255,255,255,.5);
+}
+
+.newThreadLabel {
+}
+
+.newThreadInput {
+    margin-bottom: 5px;
+}
+
+#sortingBar {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 5px;
+    height: 30px;
+}
+
+#commentButton {
+    width: 220px;
+    margin: 0 auto;
+    border-radius: 5px;
+    padding: 0px 5px;
+    font-size: 12px;
+    height: 30px;
+    background: rgba(255,255,255,0.3);
+    color: black;
+}
+
+#commentButton:hover {
+    background: rgba(255,255,255,0.5);
+}
+
+#footer {
+    width: 90%;
+    min-width: 900px;
+    margin: 0 auto;
+}
+
+#btsyncswitchonwindow {
+    margin: 220px auto;
+    width: 250px;
+    background: rgba(255,255,255,.45);
+    border-radius: 10px;
+    padding: 20px;
+    color: black;
+}
+
+#btsyncerrorwindow {
+    margin: 220px auto;
+    width: 400px;
+    background: rgba(255,255,255,.45);
+    border-radius: 10px;
+    padding: 20px;
+    color: black;
+}
+
+.windowBackground {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height:100%;
+    z-index: 1000;
+    background-color: black;
+    -moz-opacity: 0.8;
+    opacity:.8;
+    filter: alpha(opacity=80);
+}
+
+.addFolderWindow {
+    width: 400px;
+    height: 300px;
+    margin: 150px auto;
+    z-index: 1001;
+    background: url("../img/background.png") repeat;
+    border-radius: 10px;
+    padding: 20px;
+    color: black;
+}
+
+.scrollable {
+
+}
+
+#choosefolderinput {
+    height: 30px;
+    font-size: 12px;
+    margin: 10px 0;
+    background: rgba(255,255,255,.0);
+    border-color: lightgray;
+    color: lightgray;
+    color: lightgray;
+}
+
+#turnOnButton {
+    width: 60%;
+    background: rgba(255,255,255,.4);
+    color: black;
+    border-color: lightgray;
+    font-size: 13px;
+}
+
+#editFolderButton {
+    width: 180px;
+    margin: 0 10px;
+    background: rgba(255,255,255,.4);
+    color: black;
+    border-color: lightgray;
+    position: absolute;
+    bottom: 150px;
+    font-size: 12px;
+}
+
+#deleteFolderButton {
+    width: 180px;
+    margin: 0 10px;
+    background: rgba(255,255,255,.8);
+    color: black;
+    border-color: lightgray;
+    position: absolute;
+    bottom: 110px;
+    font-size: 12px;
+}
+
+#newFolderButton {
+    width: 180px;
+    margin: 0 10px;
+    background: rgba(255,255,255,.6);
+    color: black;
+    border-color: lightgray;
+    position: absolute;
+    bottom: 55px;
+    font-size: 12px;
+}
+
+#newExistingFolderButton {
+    width: 180px;
+    margin: 0 10px;
+    background: rgba(255,255,255,.6);
+    color: black;
+    border-color: lightgray;
+    position: absolute;
+    bottom: 15px;
+    font-size: 12px;
+}
+
+#addFolderConfirm {
+    width: 40%;
+    float: left;
+    margin-left: 20px;
+}
+
+#addFolderCancel {
+    width: 40%;
+    float: right;
+    margin-right: 20px;
+}
+
+#addExistingFolderConfirm {
+    width: 40%;
+    float: left;
+    margin-left: 20px;
+}
+
+#addExistingFolderCancel {
+    width: 40%;
+    float: right;
+    margin-right: 20px;
+}
+
+#setDominatingUsersButton {
+    display: block;
+    float: left;
+    width: 170px;
+    margin: 15px 15px 5px;
+    height: 28px;
+    padding: 4px;
+    background: rgba(255,255,255,.6);
+    color: black;
+    border-color: lightgray;
+    font-size: 12px;
+}
+
+#resetDominatingUsersButton {
+    display: block;
+    float: left;
+    width: 170px;
+    margin: 5px 15px;
+    height: 28px;
+    padding: 4px;
+    background: rgba(255,255,255,.6);
+    color: black;
+    border-color: lightgray;
+    font-size: 12px;
+}
+
+#closeSortingMenuButton {
+    display: block;
+    float: left;
+    width: 140px;
+    margin: 10px 25px 5px;
+    height: 28px;
+    padding: 4px;
+    background: rgba(255,255,255,.6);
+    color: black;
+    border-color: lightgray;
+    font-size: 12px;
+}

@@ -1,0 +1,7 @@
+directory=/opt/srvstack/
+command=/opt/srvstack/run.sh
+startsecs = 10
+stopwaitsecs = 40
+redirect_strderr = true
+stdout_logfile = /var/log/srvstack.log
+stderr_logfile = /var/log/srvstack-err.log

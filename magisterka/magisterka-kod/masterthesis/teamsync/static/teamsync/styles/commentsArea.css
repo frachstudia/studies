@@ -1,0 +1,415 @@
+
+/* ############################################ HEADER ############################################# */
+
+#commentsHeader {
+    width: 100% - 20px;
+    height: 30px;
+    margin-bottom: 10px;
+    padding: 3px;
+    position: relative;
+}
+
+#threadTitleArea {
+    font-size: 12px;
+    color: black;
+    float: left;
+    line-height: 2;
+    height: 30px;
+    max-width: -moz-calc(100% - 100px);
+    max-width: -webkit-calc(100% - 100px);
+    max-width: calc(100% - 100px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#commentsHeaderText {
+    background: rgba(255,255,255,0.22);
+    border-radius: 3px;
+    margin-right: 5px;
+    padding: 2px 5px;
+}
+
+.commentsMenuIcon {
+    padding: 1px;
+    float: right;
+    border-radius: 5px;
+    margin-left: 5px;
+}
+
+.commentsMenuIcon:hover {
+    background: rgba(255,255,255,.45);
+}
+
+.commentsMenuIcon img {
+    width: 20px;
+    height: 20px;
+}
+
+.commentsContextMenu {
+    background: url("../img/background.png");
+    z-index: 1000;
+    position: absolute;
+    top: 0px;
+    padding: 5px;
+    width: 250px;
+    color: white;
+    border-radius: 10px;
+    border: solid white 1px;
+}
+
+.commentsContextMenu label {
+    display: block;
+    width: 100%;
+    line-height: 12px;
+}
+
+.commentsContextMenu select {
+    padding: 0 5px;
+    float: left;
+    width: 200px;
+    margin: 5px 25px;
+    color: lightgray;
+    -webkit-appearance: none;
+}
+
+#globalCommentsContextMenu {
+    right: 30px;
+}
+
+#userViewContextMenu {
+    right: 55px;
+}
+
+#searchTextArea {
+    z-index: 1000;
+    position: absolute;
+    top: 3px;
+    right: 125px;
+    width: 120px;
+}
+
+#searchTextArea input {
+    height: 18px;
+    color: black;
+    width: 100%;
+    border-color: lightgray;
+}
+
+#searchTextArea input::-webkit-input-placeholder { /* WebKit browsers */
+    color:    black;
+}
+#searchTextArea input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    black;
+   opacity:  0.8;
+}
+#searchTextArea input::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    black;
+   opacity:  0.8;
+}
+#searchTextArea input:-ms-input-placeholder { /* Internet Explorer 10+ */
+   color:    black;
+}
+
+/* ############################################# BODY ############################################## */
+
+#commentsView {
+    position: absolute;
+    border-radius: 5px;
+    border-color: darkgray;
+    border-width: 1px;
+    border-style: solid;
+    padding: 5px;
+    top: 50px;
+    left: 10px;
+    bottom: 40px;
+    right: 10px;
+    color: black;
+}
+
+#commentsView ul {
+    list-style-type: none;
+}
+
+.avatarArea {
+    float: left;
+    margin: 15px 5px 0 0;
+    width: 30px;
+    clear: both;
+}
+
+.antyavatarArea {
+    float: left;
+    width: -moz-calc(100% - 35px);
+    width: -webkit-calc(100% - 35px);
+    width: calc(100% - 35px);
+    margin-bottom: 20px;
+}
+
+#commentReplyDiv {
+    border-top: solid darkgray 1px;
+    padding-top: 20px;
+}
+
+.authorArea {
+    float: left;
+    margin-left: 5px;
+    overflow: hidden;
+}
+
+.timeArea {
+    float: right;
+    margin-right: 5px;
+}
+
+.smallCommentIcon {
+    float: right;
+    margin-right: 2px;
+    padding: 1px 2px;
+    line-height: 11px;
+    border-radius: 2px;
+}
+
+.smallCommentIcon:hover {
+    background: rgba(255,255,255, 0.5);
+}
+
+.commentArea {
+    font-size: 11px;
+    border-radius:5px;
+    float: left;
+    width: 95%;
+    min-height: 16px;
+    padding: 3px 6px;
+    background: rgba(255,255,255,0.3);
+}
+
+.commentArea textarea {
+    width: 95%;
+    resize: vertical;
+    border: solid lightgray 1px;
+}
+
+#commentEditButton {
+    width: 70px;
+    float: left;
+    margin-top: 2px;
+}
+
+#cancelEditButton {
+    width: 70px;
+    float: left;
+    margin: 2px 0 0 5px;
+}
+
+#historyView {
+    width: 80%;
+    margin: 0 auto;
+    background: rgba(255,255,255,.2);
+    margin-bottom: 15px;
+    padding: 5px;
+    border-radius: 5px;
+    clear: both;
+}
+
+#cancelHistoringButton {
+    display: block;
+    height: 24px;
+    width: 120px;
+    padding: 2px 10px;
+    background: rgba(255,255,255,.3);
+    color: black;
+    border-color: lightgray;
+    font-size: 12px;
+    margin: 0 auto;
+}
+
+#cancelHistoringButton:hover {
+    background: rgba(255,255,255,.5);
+}
+
+.historyRow {
+    margin-bottom: 10px;
+    line-height: 1.1;
+}
+
+.additionalInfoArea1 {
+    margin-top: 2px;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    float: left;
+}
+
+.additionalInfoArea2 {
+    margin-top: 2px;
+    text-decoration: none;
+    color: black;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    float: left;
+}
+
+.additionalInfoArea2:hover {
+    text-decoration: none;
+    background: rgba(255,255,255,0.3);
+}
+
+#newCommentLi {
+    width: 100%;
+    text-align: center;
+    font-style: normal;
+    color: black;
+    margin: 0px 10px;
+}
+
+#newCommentLi a {
+    text-decoration: none;
+    color: black;
+}
+
+#commentTextArea {
+    font-weight: normal;
+    color: black;
+    font-size: 12px;
+    padding: 2px 5px;
+    width: 95%;
+    height: 23px;
+    resize: none;
+    margin-bottom: 5px;
+    background: rgba(255,255,255,.3);
+}
+#commentTextArea::-webkit-input-placeholder { /* WebKit browsers */
+    color:    black;
+}
+#commentTextArea:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    black;
+   opacity:  0.8;
+}
+#commentTextArea::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    black;
+   opacity:  0.8;
+}
+#commentTextArea:-ms-input-placeholder { /* Internet Explorer 10+ */
+   color:    black;
+}
+
+#statisticsTitle {
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+#statsTable {
+    margin: 0 auto;
+    width: 80%;
+    text-align: center;
+}
+
+#statsTable thead tr {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#newThreadArea {
+    background: rgba(255,255,255,.15);
+    border-radius: 5px;
+    padding: 5px;
+    height: 100%;
+    color: black;
+}
+
+#newThreadArea div {
+    margin-bottom: 5px;
+}
+
+#newThreadTitle {
+    width: 200px;
+    text-align: center;
+    margin: 0 auto;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.threadInputLine {
+    height: 23px;
+    clear: both;
+}
+
+.labelDiv {
+    width: 80px;
+    text-align: right;
+    height: 23px;
+    line-height: 2;
+    float: left;
+    font-weight: bold;
+}
+
+.inputDiv {
+    margin-left: 5px;
+    float: left;
+    line-height: 2;
+    width: -moz-calc(100% - 90px);
+    width: -webkit-calc(100% - 90px);
+    width: calc(100% - 90px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#newThreadTitleInput {
+    width: 200px;
+    color: black;
+}
+#newThreadTitleInput:focus {
+    border: solid 1px black;
+    outline: none;
+    color: black;
+}
+
+#newThreadFileaboutArea {
+    width: 45%;
+    color: black;
+}
+
+#newThreadCommentTextArea {
+    font-weight: normal;
+    color: black;
+    font-size: 12px;
+    padding: 2px 5px;
+    width: 95%;
+    resize: none;
+    margin-bottom: 5px;
+    background: rgba(255,255,255,.3);
+    color: black;
+}
+
+#newThreadCommentTextArea:focus {
+    border: solid 1px black;
+    outline: none;
+}
+
+#writeNewThreadButton {
+    display: block;
+    height: 24px;
+    width: 100px;
+    padding: 2px 10px;
+    background: rgba(255,255,255,.3);
+    color: black;
+    border-color: lightgray;
+    font-size: 12px;
+    margin: 0 auto;
+}
+
+#writeNewThreadButton:hover {
+    background: rgba(255,255,255,.5);
+}
+
+.newThreadLabel {
+}
+
+.newThreadInput {
+    margin-bottom: 5px;
+}

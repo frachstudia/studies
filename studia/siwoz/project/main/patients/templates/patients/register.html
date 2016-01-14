@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/style.css' %}" />
+</head>
+<body>
+<div class="container-fluid">
+    <div id="loginDiv">
+        <h4>Rejestracja</h4>
+        <form action="/patients/register" method="POST" name="registerForm" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="exampleInputText1">PESEL</label>
+                {{ form.username }}
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Hasło</label>
+                {{ form.password1 }}
+                {{ form.password2 }}
+            </div>
+            <input type="submit" id="submitButton" class="btn btn-default" value="Zarejestruj" />
+        </form>
+    </div>
+</div>
+
+    <script type="text/javascript" src="{% static 'patients/scripts/jquery-2.1.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/notify.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'patients/scripts/script.js' %}"></script>
+
+{% for err in form.errors.password2 %}
+<script type="text/javascript">$.notify('{{ err | escape }}', 'error');</script>
+{% endfor %}
+{% for err in form.errors.password1 %}
+<script type="text/javascript">$.notify('{{ err | escape }}', 'error');</script>
+{% endfor %}
+{% for err in form.errors.username %}
+<script type="text/javascript">$.notify('{{ err | escape }}', 'error');</script>
+{% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+
+% Szkielet dla pracy pisanej w języku polskim.
+
+\documentclass[polish,a4paper,twoside]{ppfcmthesis}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[OT4]{fontenc}
+\usepackage{enumitem}
+
+\newcommand{\todo}[1]{}
+\renewcommand{\todo}[1]{{\color{red} TODO: {#1}}}
+\def\labelitemi{--}
+
+\authortitle{}                                        % You can place "inż.~" here, if you really want to.
+\author{Filip Rachwalak}                              % Your name comes here
+\title{TeamSync --- System wymiany danych i komentarzy w systemach P2P}                   % Note how we protect the final title phrase from breakings
+\ppsupervisor{dr inż. Anna Kobusińska}                % Your supervisor comes here.
+\ppyear{2015}                                         % Year of final submission (not graduation!)
+
+\addto\captionspolish{\renewcommand{\figurename}{Rys.}}
+
+\brokenpenalty10000\relax
+
+\begin{document}
+
+% Front matter starts here
+\frontmatter\pagestyle{empty}%
+\maketitle\cleardoublepage%
+
+% Blank info page for "karta dyplomowa"
+\thispagestyle{empty}\vspace*{\fill}%
+\begin{center}Tutaj przychodzi karta pracy dyplomowej;\\oryginał wstawiamy do wersji dla archiwum PP, w pozostałych kopiach wstawiamy ksero.\end{center}%
+\vfill\cleardoublepage%
+
+% Table of contents.
+\pagenumbering{Roman}\pagestyle{ppfcmthesis}%
+\tableofcontents* \cleardoublepage%
+
+% Main content of your thesis starts here.
+\mainmatter%
+\input{chapters/01-wstep.tex}
+\input{chapters/02-przeglad-rozwiazan.tex}
+\input{chapters/03-model-systemu.tex}
+\input{chapters/04-architektura.tex}
+\input{chapters/05-konfiguracja.tex}
+\input{chapters/06-implementacja.tex}
+\input{chapters/07-zakonczenie.tex}
+
+% All appendices and extra material, if you have any.
+\cleardoublepage\appendix%
+\input{chapters/0a-instrukcja.tex}
+% \input{chapters/0b-pisanie-w-latexu.tex}
+
+% Bibliography (books, articles) starts here.
+\bibliographystyle{plplain}{\raggedright\sloppy\small\bibliography{chapters/bibliography}}
+
+% Colophon is a place where you should let others know about copyrights etc.
+\ppcolophon
+
+\end{document}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Team Sync</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/containers.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/inputs.css' %}" />
+    <script>
+        function turnOnBTSync() {
+            window.location.replace("btsync/start");
+        }
+    </script>
+</head>
+<body>
+<!-- MAIN CONTAINER -->
+<div id="maincontainer" class="container-fluid">
+
+    <div id="btsyncswitchonwindow">
+        <center>BTSync jest wyłączony.</center><br />
+        <center><button id="turnOnButton" class="form-control" onclick="turnOnBTSync()">Włącz</button></center>
+    </div>
+
+<!-- SCRIPTS -->
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'teamsync/scripts/jquery-2.1.4.min.js' %}"></script>
+
+</div>
+</body>
+</html>

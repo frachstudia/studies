@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{6F101501-33D9-41CB-8B4E-F651A34A4FA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Processor", "Processor\Processor.csproj", "{0AFB0B6C-88A4-4A3F-80DB-932D7CB6FEBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{1039CD31-72A9-4312-B1B6-54D3CADA9743}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{22FD16F1-74FF-4D07-B1F1-10A98EF9349A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0AFB0B6C-88A4-4A3F-80DB-932D7CB6FEBE}.Debug|x86.ActiveCfg = Debug|x86
+		{0AFB0B6C-88A4-4A3F-80DB-932D7CB6FEBE}.Debug|x86.Build.0 = Debug|x86
+		{0AFB0B6C-88A4-4A3F-80DB-932D7CB6FEBE}.Release|x86.ActiveCfg = Release|x86
+		{0AFB0B6C-88A4-4A3F-80DB-932D7CB6FEBE}.Release|x86.Build.0 = Release|x86
+		{1039CD31-72A9-4312-B1B6-54D3CADA9743}.Debug|x86.ActiveCfg = Debug|x86
+		{1039CD31-72A9-4312-B1B6-54D3CADA9743}.Debug|x86.Build.0 = Debug|x86
+		{1039CD31-72A9-4312-B1B6-54D3CADA9743}.Release|x86.ActiveCfg = Release|x86
+		{1039CD31-72A9-4312-B1B6-54D3CADA9743}.Release|x86.Build.0 = Release|x86
+		{22FD16F1-74FF-4D07-B1F1-10A98EF9349A}.Debug|x86.ActiveCfg = Debug|x86
+		{22FD16F1-74FF-4D07-B1F1-10A98EF9349A}.Debug|x86.Build.0 = Debug|x86
+		{22FD16F1-74FF-4D07-B1F1-10A98EF9349A}.Release|x86.ActiveCfg = Release|x86
+		{22FD16F1-74FF-4D07-B1F1-10A98EF9349A}.Release|x86.Build.0 = Release|x86
+		{6F101501-33D9-41CB-8B4E-F651A34A4FA1}.Debug|x86.ActiveCfg = Debug|x86
+		{6F101501-33D9-41CB-8B4E-F651A34A4FA1}.Debug|x86.Build.0 = Debug|x86
+		{6F101501-33D9-41CB-8B4E-F651A34A4FA1}.Release|x86.ActiveCfg = Release|x86
+		{6F101501-33D9-41CB-8B4E-F651A34A4FA1}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Client\Client.csproj
+	EndGlobalSection
+EndGlobal

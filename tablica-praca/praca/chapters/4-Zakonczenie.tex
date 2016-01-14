@@ -1,0 +1,20 @@
+\chapter{Zakończenie}
+
+Tablica świetlna LED stanowi skuteczny i~atrakcyjny sposób wizualizacji treści. W~toku projektu wszystkie zadania zostały całkowicie zrealizowane. Urządzenie oraz program komputerowy poprawnie realizują swoje funkcje. Mimo to powstało wiele pomysłów na poszerzenie funkcjonalności systemu. Najważniejsze z~nich to:
+
+\begin{itemize}
+	\item łączenie kilku efektów tekstowych na raz, dodanie nowych efektów np. miganie tekstu, kursywa lub pogrubienie, dodanie czcionki o~zmiennej szerokości,
+	\item dodatkowe elementy w~przyborniku podczas rysowania np. symbol słońca, chmur lub deszczu oraz wypełnione figury geometryczne,
+	\item dynamiczna grafika w~postaci rysowanych kolejno klatek lub wczytywanie skonwertowanych plików animowanych \texttt{.gif},
+	\item komunikacja z~komputerem w~czasie rzeczywistym, co pozwoli na wyświetlanie np. danych meteorologicznych i~kursów giełdowych pobieranych z~Internetu,
+	\item rozszerzenie możliwości plików M2F o~dodatkowe instrukcje, w~tym obsługę większych obszarów wyświetlacza, modyfikację grup znaków, skoki warunkowe i~inne,
+	\item kodowanie znaków można rozszerzyć o~kolejne znaki, w~tym znaki dynamiczne, takie jak temperatura, dzień tygodnia.
+\end{itemize}
+
+Skonstruowane urządzenie ma budowę modułową, po zmianie oprogramowania można wykorzystać istniejącą bazę sprzętową do budowy tablicy o~innym rozmiarze. Dzięki wykorzystaniu karty SD można łatwo przenosić dane między urządzeniem a~komputerem.
+
+Do wad przyjętych rozwiązań zaliczyć trzeba: brak wyprowadzonych magistral danych np. $I^2C$, co pozwoliłoby dołączenie czujników temperatury oraz duża objętość plików M2F, gdy animacja jest skomplikowana. Brak czcionek proporcjonalnych ogranicza również estetykę wyświetlanych napisów.
+
+Główną trudnością w~implementacji programu użytkownika była generacja pliku, ponieważ ilość komend przechowywanych w~pliku animacji musiała być jak najmniejsza. Aby rozwiązać ten problem użyto wielu instrukcji warunkowych, co przyczyniło się do wzrostu długości kodu i~dłuższego generowania plików. Było to jednak opłacalne, gdyż po zastosowaniu większej ilości warunków dotyczących wykrywania pozycji znaku na ekranie, rozmiar pliku animacji znacząco się zmniejszył nie zmieniając przy tym samej animacji.
+
+Realizacja niniejszej pracy przyczyniła się do poszerzenia wiedzy autorów z~dziedziny elektroniki i~systemów wbudowanych.

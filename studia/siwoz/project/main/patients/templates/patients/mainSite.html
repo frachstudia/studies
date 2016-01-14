@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html ng-app="patientsApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/bootstrap-select.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/bootstrap-datepicker.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/jquery.dataTables.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/dataTables.colVis.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/dialogs.min.css' %}" />
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div class="container-fluid" id="mainBody" style="display: none;">
+
+    <!-- HEADER CONTAINER -->
+    <div id="headerDiv">
+        <h3>Pacjent: {{ user.get_username }} {{ sex }}</h3>
+    </div>
+
+    <!-- MAIN WINDOW CONTAINER -->
+    <div id="mainDiv" ngview>
+        <section ng-controller="MainMenuController as mainMenuCtrl">
+            <ul class="nav nav-tabs">
+                <li ng-class="{ active: mainMenuCtrl.isSelected(1) }"> <a href ng-click="mainMenuCtrl.selectTab(1)">Badania</a> </li>
+                <li ng-class="{ active: mainMenuCtrl.isSelected(2) }"> <a href ng-click="mainMenuCtrl.selectTab(2)">Wizyty</a> </li>
+                <li ng-class="{ active: mainMenuCtrl.isSelected(3) }"> <a href ng-click="mainMenuCtrl.selectTab(3)">Udostępnianie wyników lekarzom</a> </li>
+                <li ng-class="{ active: mainMenuCtrl.isSelected(4) }"> <a href ng-click="mainMenuCtrl.selectTab(4)">Zestawienia i raporty</a> </li>
+                <li style="float: right;" ng-class="{ active: mainMenuCtrl.optionsTab }" role="presentation" class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" href ng-click="mainMenuCtrl.selectOptionsTab()">
+                        Opcje <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href ng-click="mainMenuCtrl.changePassword()">Zmień hasło</a></li>
+                        <li><a href ng-click="mainMenuCtrl.deleteAccount()">Usuń konto</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li><a href ng-click="mainMenuCtrl.logout()">Wyloguj</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <!-- BADANIA WINDOW -->
+            <div class="mainMenuCtrl tab-pane" ng-show="mainMenuCtrl.isSelected(1)">
+                <section ng-controller="TestsController as testsCtrl">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li ng-class="{ active: testsCtrl.isSelected(1) }"> <a href ng-click="testsCtrl.selectTab(1)">Moje wyniki</a> </li>
+                        <li ng-class="{ active: testsCtrl.isSelected(2) }"> <a href ng-click="testsCtrl.selectTab(2)">Dodaj wynik</a> </li>
+                        <li class="nav-divider"></li>
+                        <li ng-class="{ active: testsCtrl.isSelected(3) }"> <a href ng-click="testsCtrl.selectTab(3)">Lista badań</a> </li>
+                        <li ng-class="{ active: testsCtrl.isSelected(4) }"> <a href ng-click="testsCtrl.selectTab(4)">Lista lekarzy</a> </li>
+                        <li ng-class="{ active: testsCtrl.isSelected(5) }"> <a href ng-click="testsCtrl.selectTab(5)">Lista placówek medycznych</a> </li>
+                        <li class="nav-divider"></li>
+                        <li ng-class="{ active: testsCtrl.isSelected(6) }"> <a href ng-click="testsCtrl.selectTab(6)">Kategorie</a> </li>
+                    </ul>
+
+                    <section ng-controller="resultsDataController">
+                    <!-- MOJE WYNIKI WINDOW -->
+                    <div class="testsCtrl" ng-show="testsCtrl.isSelected(1)">
+                        <h3>Moje wyniki:</h3>
+                        <table class="table table-hover table-condensed" id="resultsTable">
+                            <thead>
+                                <tr>
+                                    <th class="dateCol">Data</th>
+                                    <th class="testCol">Nazwa badania</th>
+                                    <th>Wynik</th>
+                                    <th>Ref Min</th>
+                                    <th>Ref Max</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for result in results %}
+                                <tr ng-click="showEditDialog({{result.id}})">
+                                    <td class="dateCol">{{ result.date | date:'Y-m-d' }}</td>
+                                    <td>{{ result.test.fullname }}</td>
+                                    <td>{{ result.result }}</td>
+                                    <td class="refTd">{{ result.test.refmin | escape | slice:":-2" }}</td>
+                                    <td class="refTd">{{ result.test.refmax | escape | slice:":-2" }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <br />
+
+                        <!-- EDIT RESULT -->
+                        <div class="modal" id="editModal" tabindex="-1" ng-show="editDialogVisible">
+                            {% verbatim %}
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="myModalLabel">Edytuj wynik</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group" style="float: left; margin-right: 20px;">
+                                            <label>Nazwa badania:</label><br />
+                                            <label style="width: 320px; font-weight: normal;"
+                                                    ng-model="selectedTest.fullname">{{ selectedTest.fullname }}</label>
+                                        </div>
+                                        <div class="form-group" style="float: left;">
+                                            <label>Data badania:</label><br />
+                                            <input class="datepicker" ng-model="selectedResult.date">
+                                        </div>
+                                        <div class="form-group" style="float: left; width: 100%;">
+                                            <label>Miejsce badania:</label><br />
+                                            <label ng-model="selectedPlace.name" style="font-weight: normal;">{{ selectedPlace.name }}</label>
+                                        </div>
+                                        <div class="form-group" style="float: left; width: 100%;">
+                                            <label style="margin: 0 20px 10px 0; width: 160px;">Wynik:</label>
+                                            <input class="form-control" type="text" ng-show="selectedResult.resulttype === 'numeric'" only-digits placeholder="Wpisz wynik" style="width: 150px;" ng-model="selectedResult.result">
+                                            <textarea class="form-control" rows="4" ng-hide="selectedResult.resulttype === 'numeric'" placeholder="Wpisz wynik opisowy" style="width: 400px;"ng-model="selectedResult.result"></textarea>
+                                        </div>
+                                        <div class="form-group" style="float: left; width: 100%;">
+                                            <label>Komentarz:</label>
+                                            <textarea class="form-control" rows="2" placeholder="Wpisz komentarz (może zostać pusty)" style="width: 400px;"ng-model="selectedResult.comment" value="selectedResult.comment"></textarea>
+                                        </div>
+                                        <div class="form-group" style="float: left; width: 100%; margin-top: 20px;">
+                                            <button type="button" class="btn btn-primary" ng-click="commitEdit()">Zapisz zmiany</button>
+                                            <button type="button" class="btn btn-default" ng-click="closeEditDialog()">Cofnij</button>
+                                            <button type="button" class="btn btn-danger" ng-click="showDeleteDialog()" style="float: right;">Usuń wynik</button>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DELETE RESULT -->
+                        <div class="modal" id="editModal" tabindex="-1" ng-show="deleteDialogVisible">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="myModalLabel">Usuń wynik</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        Czy na pewno chcesz usunąć ten wynik?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" ng-click="closeDeleteDialog()">Cofnij</button>
+                                        <button type="button" class="btn btn-danger" ng-click="deleteResult()">Usuń</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endverbatim %}
+                        </div>
+                    </div>
+
+                    <!-- DODAJ WYNIK WINDOW -->
+                    <div class="testsCtrl" ng-show="testsCtrl.isSelected(2)">
+                        {% verbatim %}
+                        <h3>Dodaj wynik:</h3>
+                        <div class="form-group" style="float: left; margin-right: 20px;">
+                            <label>Nazwa badania:</label>
+                            <select class="form-control"
+                                    style="width: 320px;"
+                                    ng-change="selectTest(selectedTest)"
+                                    ng-model="selectedTest"
+                                    ng-options="test.fullname for test in tests"></select>
+                        </div>
+                        <div class="form-group" style="float: left;">
+                            <label>Data badania:</label><br />
+                            <input class="form-control datepicker" ng-model="newResult.date">
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%;">
+                            <label>Miejsce badania:</label>
+                            <select class="form-control"
+                                    ng-change="selectPlace(selectedPlace)"
+                                    ng-model="selectedPlace"
+                                    ng-options="place.name for place in places"></select>
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%;">
+                            <label style="margin: 0 20px 10px 0; width: 160px;" ng-model="labelText">{{ labelText }}</label>
+                            <input style="height: 30px; padding: 0 10px;" type="button" class="btn btn-primary" value="Zmień typ wyniku" ng-click="switchResult()">
+                            <input class="form-control" type="text" ng-show="numericResult" only-digits placeholder="Wpisz wynik" style="width: 150px;" ng-model="result1">
+                            <textarea class="form-control" rows="4" ng-hide="numericResult" placeholder="Wpisz wynik opisowy" style="width: 400px;"ng-model="result2"></textarea>
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%;">
+                            <label>Komentarz:</label>
+                            <textarea class="form-control" rows="2" placeholder="Wpisz komentarz (może zostać pusty)" style="width: 400px;"ng-model="newResult.comment"></textarea>
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%; margin-top: 20px;">
+                            <input style="width: 250px; height: 40px;" type="button" class="btn btn-primary" value="Dodaj wynik" ng-click="postResult()">
+                        </div>
+                        {% endverbatim %}
+                    </div>
+                    </section>
+
+                    <!-- RODZAJE BADAŃ WINDOW -->
+                    <div class="testsCtrl" ng-show="testsCtrl.isSelected(3)">
+                        <h3>Rodzaje badań:</h3>
+                        <table class="table table-hover table-condensed dataTable">
+                            <thead>
+                                <tr>
+                                    <th class="unitTd">Nazwa badania</th>
+                                    <th class="unitTd">Jednostka</th>
+                                    <th class="unitTd">Min. Ref.</th>
+                                    <th class="unitTd">Max. Ref.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for test in tests %}
+                                <tr>
+                                    <td>{{ test.name }}</td>
+                                    <td class="unitTd">{{ test.unit.name }}</td>
+                                    <td class="refTd">{{ test.refmin | escape | slice:":-2" }}</td>
+                                    <td class="refTd">{{ test.refmax | escape | slice:":-2" }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- LISTA LEKARZY WINDOW -->
+                    <div class="testsCtrl" ng-show="testsCtrl.isSelected(4)">
+                        <h3>Lista lekarzy:</h3>
+                        <table class="table table-hover table-condensed dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Imię i nazwisko</th>
+                                    <th>Specjalność</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for doctor in doctors %}
+                                <tr>
+                                    <td>{{ doctor.name }}</td>
+                                    <td>{{ doctor.speciality }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- LISTA PLACÓWEK MEDYCZNYCH WINDOW -->
+                    <div class="testsCtrl" ng-show="testsCtrl.isSelected(5)">
+                        <h3>Lista placówek medycznych:</h3>
+                        <table class="table table-hover table-condensed dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Nazwa placówki</th>
+                                    <th>Adres</th>
+                                    <th>Telefon</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for place in places %}
+                                <tr>
+                                    <td>{{ place.name }}</td>
+                                    <td>{{ place.address }}</td>
+                                    <td>{{ place.telnumber }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ZARZĄDZANIE KATEGORIAMI -->
+                    <div class="testsCtrl" ng-show="testsCtrl.isSelected(6)">
+                        <section ng-controller="categorysDataController as categorysCtrl">
+                            <h3>Kategorie:</h3>
+                            <p style="margin: 0 0 40px 0;">Kategorie pomagają w udostępnianiu wyników lekarzowi oraz w generowaniu zestawień i wykresów.
+                                W tej sekcji możesz zarządzać swoimi kategoriami oraz przypisywać im konkretne badania.</p>
+                            {% verbatim %}
+                            <table id="categoryTable">
+                                <tr>
+                                    <td width="200px">
+                                        <select class="form-control" ng-change="categorysCtrl.selectCategory(activeCategory)" ng-model="activeCategory" ng-options="category.name for category in categorys"></select>
+                                    </td>
+                                    <td><input ng-model="activeCategory.name" type="text" class="form-control" ng-show="categorysCtrl.showEdit" placeholder="Pole edycji kategorii" value="{{activeCategory.name}}"></td>
+                                    <td><input ng-click="categorysCtrl.changeCat()" ng-show="categorysCtrl.showEdit" type="submit" class="btn btn-primary" value="Zatwierdź zmianę nazwy"></td>
+                                    <td><input ng-click="categorysCtrl.deleteCat()" ng-show="categorysCtrl.showEdit" type="submit" class="btn btn-primary" value="Usuń kategorię"></td>
+                                </tr>
+                                <tr>
+                                    <td><input ng-click="categorysCtrl.addCategoryClick()" type="submit" class="btn btn-primary" value="{{ categorysCtrl.newCategoryButtonText }}"></td>
+                                    <td><input ng-model="newCategory.name" type="text" class="form-control" ng-show="categorysCtrl.showNew" placeholder="Dodaj nową kategorię" value="{{activeCategory.name}}"></td>
+                                    <td><input ng-click="categorysCtrl.addCat()" ng-show="categorysCtrl.showNew" type="submit" class="btn btn-primary" value="Dodaj"></td>
+                                </tr>
+                            </table>
+                            <div style="margin: 0 auto; width: 90%;" ng-hide="activeCategory == null">
+                                <h4 style="margin: 30px 0 15px 0;">Lista badań należących do kategorii {{ activeCategory.name }}:</h4>
+                                <label class="testLabel" ng-repeat="test in tests">
+                                    <div><input type="checkbox" ng-click="changeState(test.id)" ng-model="testInCategory[test.id].value"> {{ test.fullname }}</div>
+                                </label>
+                            </div>
+                            {% endverbatim %}
+                        </section>
+                    </div>
+                </section>
+            </div>
+
+            <!-- WIZYTY WINDOW -->
+            <div class="mainMenuCtrl tab-pane" ng-show="mainMenuCtrl.isSelected(2)">
+                <section ng-controller="VisitsController as visitsCtrl">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li ng-class="{ active: visitsCtrl.isSelected(1) }"> <a href ng-click="visitsCtrl.selectTab(1)">Umówione wizyty</a> </li>
+                        <li ng-class="{ active: visitsCtrl.isSelected(2) }"> <a href ng-click="visitsCtrl.selectTab(2)">Dodaj wizytę</a> </li>
+                        <li class="nav-divider"></li>
+                        <li ng-class="{ active: visitsCtrl.isSelected(3) }"> <a href ng-click="visitsCtrl.selectTab(3)">Badania okresowe</a> </li>
+                        <li ng-class="{ active: visitsCtrl.isSelected(4) }"> <a href ng-click="visitsCtrl.selectTab(4)">Dodaj badanie</a> </li>
+                    </ul>
+
+                    <section ng-controller="visitsDataController">
+                    <div ng-show="visitsCtrl.isSelected(1)" class="visitsCtrl">
+                        {% verbatim %}
+                        <h3 style="margin-bottom: 40px;">Wizyty:</h3>
+                        <h4>Nadchodzące wizyty:</h4>
+                        <ul id="visitsUl" ng-repeat="visit in visits | orderBy:'-date'">
+                            <li ng-hide="isPast(visit.date)"><label><div ng-click="showEditVisitDialog(visit.id)">{{ visit.date | date:'yyyy-MM-dd HH:mm' }}:  {{ visit.name }}</div></label></li>
+                        </ul>
+                        <h4 style="margin-top: 20px;">Przeszłe wizyty:</h4>
+                        <ul id="visitsUl" ng-repeat="visit in visits | orderBy:'-date'">
+                            <li ng-show="isPast(visit.date)"><label><div ng-click="showEditVisitDialog(visit.id)">{{ visit.date | date:'yyyy-MM-dd HH:mm' }}: {{ visit.name }}</div></label></li>
+                        </ul>
+                        {% endverbatim %}
+                    </div>
+
+                    <!-- DODAJ WIZYTĘ -->
+                    <div ng-show="visitsCtrl.isSelected(2)" class="visitsCtrl">
+                        {% verbatim %}
+                        <h3>Dodaj wizytę:</h3>
+                        <div class="form-group" style="float: left; margin-right: 20px; width: 40%;">
+                            <label>Nazwa wizyty:</label>
+                            <input class="form-control" type="text" placeholder="Wpisz nazwę wizyty" ng-model="newVisit.name">
+                        </div>
+                        <div class="form-group" style="float: left; width: 50%;">
+                            <label>Data wizyty:</label><br />
+                            <input style="width: 30%; display: inline;" class="form-control datepicker" placeholder="Dzień" ng-model="newVisitDate">
+                            <input style="width: 20%; display: inline;" class="form-control" type="text" placeholder="Godzina" only-time ng-model="newVisitTime">
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%;">
+                            <label>Miejsce wizyty:</label>
+                            <select class="form-control"
+                                    ng-change="selectPlace(selectedPlace)"
+                                    ng-model="selectedPlace"
+                                    ng-options="place.name for place in places"></select>
+                        </div>
+                        <div class="form-group" style="float: left; width: 30%;">
+                            <label>Lekarz:</label>
+                            <select class="form-control"
+                                    ng-change="selectDoctor(selectedDoctor)"
+                                    ng-model="selectedDoctor"
+                                    ng-options="doctor.name for doctor in doctors"></select>
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%;">
+                            <label>Komentarz:</label>
+                            <textarea class="form-control" rows="2" placeholder="Wpisz komentarz (może zostać pusty)" style="width: 400px;" ng-model="newVisit.comment"></textarea>
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%;">
+                            <label>Przygotowanie do wizyty:</label>
+                            <textarea class="form-control" rows="2" placeholder="Jak należy się przygotować do wizyty?" style="width: 400px;" ng-model="newVisit.preparation"></textarea>
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%; margin-top: 20px;">
+                            <input style="width: 250px; height: 40px;" type="button" class="btn btn-primary" value="Dodaj wizytę" ng-click="postVisit()">
+                        </div>
+                        {% endverbatim %}
+                    </div>
+
+                    <!-- EDIT VISIT -->
+                    <div class="modal" id="editModal" tabindex="-1" ng-show="editVisitVisible">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myModalLabel">Edytuj wizytę</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group" style="float: left; margin-right: 20px; width: 40%;">
+                                        <label>Nazwa wizyty:</label>
+                                        <input class="form-control" type="text" placeholder="Wpisz nazwę wizyty" ng-model="editedVisit.name">
+                                    </div>
+                                    <div class="form-group" style="float: left; width: 50%;">
+                                        <label>Data wizyty:</label><br />
+                                        <input style="width: 40%; display: inline;" class="form-control datepicker" placeholder="Dzień" ng-model="editedDate">
+                                        <input style="width: 30%; display: inline;" class="form-control" type="text" placeholder="Godzina" only-time ng-model="editedTime">
+                                    </div>
+                                    <div class="form-group" style="float: left; width: 100%;">
+                                        <label>Miejsce badania:</label>
+                                        <select class="form-control"
+                                                ng-change="selectPlace(selectedPlace)"
+                                                ng-model="selectedPlace"
+                                                ng-options="place.name for place in places"></select>
+                                    </div>
+                                    <div class="form-group" style="float: left; width: 30%;">
+                                        <label>Lekarz:</label>
+                                        <select class="form-control"
+                                                ng-change="selectDoctor(selectedDoctor)"
+                                                ng-model="selectedDoctor"
+                                                ng-options="doctor.name for doctor in doctors"></select>
+                                    </div>
+                                    <div class="form-group" style="float: left; width: 100%;">
+                                        <label>Komentarz:</label>
+                                        <textarea class="form-control" rows="2" placeholder="Wpisz komentarz (może zostać pusty)" style="width: 400px;" ng-model="editedVisit.comment"></textarea>
+                                    </div>
+                                    <div class="form-group" style="float: left; width: 100%;">
+                                        <label>Przygotowanie do wizyty:</label>
+                                        <textarea class="form-control" rows="2" placeholder="Jak należy się przygotować do wizyty?" style="width: 400px;" ng-model="editedVisit.preparation"></textarea>
+                                    </div>
+                                    <div class="form-group" style="float: left; width: 100%;">
+                                        <button type="button" class="btn btn-primary" ng-click="saveVisitChanges()">Zapisz zmiany</button>
+                                        <button type="button" class="btn btn-default" ng-click="closeEditVisitDialog()">Cofnij</button>
+                                        <button style="float: right;" type="button" class="btn btn-danger" ng-click="showDeleteVisitDialog()">Usuń wizytę</button>
+                                    </div>
+                                <div class="modal-footer">
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DELETE VISIT -->
+                    <div class="modal" id="editModal" tabindex="-1" ng-show="deleteVisitVisible">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myModalLabel">Usuń wizytę</h4>
+                                </div>
+                                <div class="modal-body">
+                                    {% verbatim %}
+                                    Czy na pewno chcesz usunąć wizytę "{{ editedVisit.name }}"?
+                                    {% endverbatim %}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" ng-click="closeDeleteVisitDialog()">Anuluj</button>
+                                    <button type="button" class="btn btn-danger" ng-click="deleteVisit()">Usuń</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    </section>
+                    <section ng-controller="periodicTestsDataController">
+
+                    <div ng-show="visitsCtrl.isSelected(3)" class="visitsCtrl">
+                        <div>
+                            DODATKOWA FUNKCJONALNOŚĆ. DO ZROBIENIA PÓŹNIEJ
+                        </div>
+                    </div>
+
+                    <div ng-show="visitsCtrl.isSelected(4)" class="visitsCtrl">
+                        {% verbatim %}
+                        <h3>Dodaj badanie:</h3>
+                        <div class="form-group" style="float: left; margin-right: 20px;">
+                            <label>Nazwa badania:</label>
+                            <select class="form-control"
+                                    style="width: 320px;"
+                                    ng-change="selectTest(selectedTest)"
+                                    ng-model="selectedTest"
+                                    ng-options="test.fullname for test in tests"></select>
+                        </div>
+                        <div class="form-group" style="float: left;">
+                            <label>Data rozpoczęcia cyklu badań:</label><br />
+                            <input class="form-control datepicker" ng-model="newPeriodicTest.startdate">
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%;">
+                            <label>Miejsce badania:</label>
+                            <select class="form-control"
+                                    ng-change="selectPlace(selectedPlace)"
+                                    ng-model="selectedPlace"
+                                    ng-options="place.name for place in places"></select>
+                        </div>
+                        <div class="form-group" style="float: left; width: 30%;">
+                            <label>Czas pomiędzy badaniami:</label>
+                            <input class="form-control" ng-model="newPeriodicTest.intervalvalue">
+                            <select class="form-control"
+                                    ng-options="type.unit for type in inetrvalTypeOptions"></select>
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%;">
+                            <label>Komentarz:</label>
+                            <textarea class="form-control" rows="2" placeholder="Wpisz komentarz (może zostać pusty)" style="width: 400px;" ng-model="newVisit.comment"></textarea>
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%;">
+                            <label>Przygotowanie do wizyty:</label>
+                            <textarea class="form-control" rows="2" placeholder="Jak należy się przygotować do wizyty?" style="width: 400px;" ng-model="newVisit.preparation"></textarea>
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%; margin-top: 20px;">
+                            <input style="width: 250px; height: 40px;" type="button" class="btn btn-primary" value="Dodaj wynik" ng-click="postVisit()">
+                        </div>
+                        {% endverbatim %}
+                    </div>
+                    </section>
+                </section>
+            </div>
+
+            <!-- UDOSTĘPNIANIE WYNIKÓW WINDOW -->
+            <div class="mainMenuCtrl tab-pane" ng-show="mainMenuCtrl.isSelected(3)">
+                <section ng-controller="shareResultsController as shareResultsCtrl" ng-init="pesel = {{ user.get_username }}">
+                    <h3>Udostępnianie wyników:</h3>
+                    <p>
+                        W tym miejscu można tworzyć profile, które będą udostępniane lekarzowi. Stwórz profil o dowolnej nazwie, która
+                        w połączeniu z Twoim PESELem będzie umożliwiała lekarzowi obejrzenie wyników.
+                        W każdym profilu możesz wybrać badania, których wyniki będą widoczne dla lekarza. W tym celu pomocne będą kategorie.
+                    </p>
+                    <p style="margin: 0 0 40px 0;">
+                        Jeśli profil jest ustawiony na "nieaktywny", lekarz nie zobaczy wyników. Aby aktywować profil kliknij w zielony przycisk "Aktywuj".
+                    </p>
+                    {% verbatim %}
+                    <h4>Profile:</h4>
+                    <table id="categoryTable">
+                        <tr>
+                            <td width="200px">
+                                <select class="form-control"
+                                        ng-change="selectProfile(activeProfile)"
+                                        ng-model="activeProfile"
+                                        ng-options="profile.name for profile in profiles"></select>
+                            </td>
+                            <td><input type="text" class="form-control" value="{{activeProfile.name}}" ng-model="activeProfile.name" ng-show="activeVisible" placeholder="Pole edycji profilu" profile-input></td>
+                            <td><input type="submit" class="btn btn-primary" ng-show="activeVisible" value="Zatwierdź zmianę nazwy" ng-click="updateProfile()"></td>
+                            <td><input type="submit" class="btn btn-primary" ng-show="activeVisible" value="Usuń profil" ng-click="deleteProfile()"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="submit" class="btn btn-primary" value="{{newProfileButtonText}}" ng-click="newProfileButtonChange()"></td>
+                            <td><input type="text" class="form-control" placeholder="Dodaj nowy profil" ng-show="newProfileButtonClicked" ng-model="newProfile.name" profile-input></td>
+                            <td><input type="submit" class="btn btn-primary" value="Dodaj" ng-show="newProfileButtonClicked" ng-click="postProfile()"></td>
+                        </tr>
+                        <tr ng-show="activeVisible">
+                            <td style="padding: 5px 0px; text-align: center;"><label ng-style="labelColor" ng-model="activatedText">{{activatedText}}</label></td>
+                            <td ng-show="isActivated"><input type="submit" class="btn btn-danger" value='Dezaktywuj' ng-click="deactivateProfile(pesel)"></td>
+                            <td ng-hide="isActivated"><input type="submit" class="btn btn-success" value='Aktywuj' ng-click="activateProfile(pesel)"></td>
+                        </tr>
+                    </table>
+                    <div style="margin: 0 auto; width: 90%;" ng-show="activeVisible">
+                        <h4 style="margin: 30px 0 15px 0;" ng-click="show()">Lista badań należących do profilu {{ activeProfile.name }}:</h4>
+                        <label class="testLabel" ng-repeat="test in tests">
+                            <div><input type="checkbox" ng-click="changeState(test.id)" ng-model="testInProfile[test.id].value"> {{ test.fullname }}</div>
+                        </label>
+                    </div>
+                    {% endverbatim %}
+                </section>
+            </div>
+
+            <!-- ZESTAWIENIA WINDOW -->
+            <div class="mainMenuCtrl tab-pane" ng-show="mainMenuCtrl.isSelected(4)">
+                <section ng-controller="ReportsController as reportsCtrl">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li ng-class="{ active: reportsCtrl.isSelected(1) }"> <a href ng-click="reportsCtrl.selectTab(1)">Według badania</a> </li>
+                        <li ng-class="{ active: reportsCtrl.isSelected(2) }"> <a href ng-click="reportsCtrl.selectTab(2)">Według placówki</a> </li>
+                        <li ng-class="{ active: reportsCtrl.isSelected(3) }"> <a href ng-click="reportsCtrl.selectTab(3)">Według kategorii</a> </li>
+                    </ul>
+
+                    <div class="testsCtrl" ng-show="reportsCtrl.isSelected(1)">
+                        {% verbatim %}
+                        <h3 style="float: left; width: 100%;">Zestawienie według badań</h3>
+                        <div class="form-group" style="float: left; margin-right: 20px;">
+                            <label style="width: 100%">Lista badań ujętych w zestawieniu:</label>
+                            <label class="testLabel" ng-repeat="test in tests">
+                                <div><input type="checkbox"
+                                            ng-model="selectedTests[test.id]"> {{ test.fullname }}</div>
+                            </label>
+                        </div>
+                        <div class="form-group" style="float: left; margin-right: 20px;">
+                            <label style="float: left; width: 100%%;" >Zakres czasowy zestawienia:</label>
+                            <label class="dateLabelReport">Od: </label>
+                            <input class="dateInputReport form-control datepicker" ng-model="startDate" ng-change="changeDate()">
+                            <label class="dateLabelReport">Do: </label>
+                            <input class="dateInputReport form-control datepicker" ng-model="stopDate" ng-change="changeDate()">
+                            <label id="dateLabelText" ng-model="dateLabelText">{{ dateLabelText}}</label>
+                        </div>
+                        <div class="form-group" style="float: left; width: 100%; margin-top: 20px;">
+                            <input style="height: 40px; margin-left: 50px;" type="button" class="btn btn-primary" value="Utwórz zestawienie">
+                        </div>
+                        {% endverbatim %}
+                    </div>
+
+                    <div class="testsCtrl" ng-show="reportsCtrl.isSelected(2)">
+                        <h3>Zestawienie według miejsca badania:</h3>
+                        Do doimplementowania
+                    </div>
+
+                    <div class="testsCtrl" ng-show="reportsCtrl.isSelected(3)">
+                        <h3>Zestawienie według kategorii:</h3>
+                        Do doimplementowania
+                    </div>
+
+                </section>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- SCRIPTS -->
+<script type="text/javascript" src="{% static 'patients/scripts/jquery-2.1.4.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/angular.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/angular-resource.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/angular-checklist-model.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/angular-datatables.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/notify.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/bootstrap-select.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/bootstrap-datepicker.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/ui-bootstrap-tpls-0.13.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/script.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/jquery.dataTables.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/dataTables.colVis.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/dataTables.bootstrap.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/dialogs.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'patients/scripts/md5.js' %}"></script>
+
+</body>
+</html>

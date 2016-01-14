@@ -1,0 +1,41 @@
+#filesUl {
+    margin: 0;
+    list-style-type: none;
+}
+
+#filesUl li div {
+    padding: 3px 5px;
+}
+
+#filesUl li div:hover {
+    background: rgba(255,255,255,.25);
+    border-radius: 3px;
+}
+
+#filesUl a {
+    text-decoration: none;
+    color: black;
+}
+
+#filesUl a:hover {
+    text-decoration: none;
+    color: black;
+}
+
+#filesViewText {
+    position: absolute;
+    bottom: 28px;
+    right: 15px;
+    height: 12px;
+    background: lightgray;
+}
+
+#filesViewText p {
+    font-size: 10px;
+    color: black;
+    text-align: right;
+}
+
+.filesSpan {
+    float: right;
+}

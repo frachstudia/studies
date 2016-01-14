@@ -1,0 +1,202 @@
+#loginDiv {
+    width: 350px;
+    margin: 120px auto;
+    border: solid 1px;
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+}
+
+#loginDiv h4 {
+    text-align: center;
+}
+
+#headerDiv {
+    width: 80%;
+    margin: 10px auto;
+}
+
+#mainDiv{
+    margin: 10px auto;
+    width: 80%;
+    min-width: 800px;
+    margin: 10px auto;
+}
+
+#mainDiv .mainMenuCtrl {
+    padding: 10px;
+}
+
+#mainDiv .nav-stacked {
+    width: 20%;
+    float: left;
+}
+
+#mainDiv .testsCtrl{
+    float: left;
+    width:77%;
+    margin-left: 20px;
+    padding: 10px;
+}
+
+#mainDiv .visitsCtrl{
+    float: left;
+    width:77%;
+    margin-left: 20px;
+    padding: 10px;
+}
+
+.table-hover tr {
+    height: 10px;
+}
+
+#registerSuggestion {
+    position: absolute;
+    bottom: 5px;
+    left: 0px;
+    width: 100%;
+    text-align: center;
+}
+
+#submitButton {
+    display: block;
+    margin: 0 auto;
+    width: 120px;
+}
+
+#id_password2 {
+    margin-top: 5px;
+}
+
+.unitTd {
+    text-align: center;
+}
+
+.refTd {
+    text-align: right;
+    width: 80px;
+    min-width: 80px;
+}
+
+h3 {
+    margin: 0 0 20px 0;
+}
+
+#categoryTable td {
+    padding: 0 0 5px 10px;
+}
+
+.testLabel {
+    margin-left: 10px;
+    width: 320px;
+    font-weight: normal;
+}
+
+.testLabel div {
+    padding: 2px 5px;
+    border: solid white 1px;
+    border-radius: 5px;
+}
+
+.testLabel div:hover  {
+    border: solid grey 1px;
+    border-radius: 5px;
+    background-color: lightgrey;
+}
+
+.dateCol {
+    width: 80px;
+    min-width: 90px;
+    text-align: center;
+}
+
+.editCol {
+    text-align: center;
+    width: 110px;
+}
+
+.testCol {
+    width: 240px;
+    min-width: 240px;
+    text-size: 8px;
+    text-align: center;
+}
+
+.tableButton {
+    height: 28px;
+    margin: 0;
+    width: 50px;
+    padding: 0;
+}
+
+.modal {
+    display: block;
+}
+.modal-body:before,
+.modal-body:after {
+    display: table;
+    content: " ";
+}
+.modal-header:before,
+.modal-header:after {
+    display: table;
+    content: " ";
+}
+
+#editResultDiv {
+    height: 400px;
+    width: 800px;
+    background: red;
+    position: absolute;
+    vertical-align: middle;
+}
+
+#visitsUl {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 0 20px;
+}
+
+#visitsUl li {
+    margin: 0;
+}
+
+#visitsUl li label {
+    font-weight: normal;
+}
+
+#visitsUl li div {
+    padding: 2px 5px;
+    border: solid white 1px;
+    border-radius: 5px;
+}
+
+#visitsUl li div:hover  {
+    border: solid grey 1px;
+    border-radius: 5px;
+    background-color: lightgrey;
+}
+
+#resultsTable .dataRow:hover {
+    border: solid black 1px;
+    border-radius: 5px;
+    background-color: lightgrey;
+}
+
+#dateLabelText {
+    padding: 5px 10px;
+    font-weight: normal;
+}
+
+.dateInputReport {
+    float: left;
+    width: 120px;
+    margin-right: 10px;
+}
+
+.dateLabelReport {
+    float: left;
+    width: 20px;
+    margin-right: 10px;
+    padding: 5px 0;
+}

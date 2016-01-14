@@ -1,0 +1,339 @@
+\chapter{Ogólne działanie systemu i konfiguracja}
+
+Jak zostało napisane w sekcji \ref{teamsyncarch}, użytkownicy nie wymieniają ze sobą informacji poprzez komunikaty, lecz poprzez umieszczanie odpowiednio zainicjowanych i umieszczonych plików. Aby lepiej zrozumieć sposoby zamieszczania komentarzy, opisano w poniższych sekcjach jaką strukturę ma synchronizowany katalog, jak system jest skonfigurowany oraz jak rekompensowane są wady spowodowane przez architekturę systemu.
+
+\section{Struktura katalogów}
+
+\label{directorystructure}
+
+Podczas tworzenia synchronizowanego folderu użytkownik może dołączyć do istniejącego folderu (założonego przez innego użytkownika) lub zainicjować własny. W obydwóch przypadkach uwspólniany folder musi być pusty --- wymaganie to jest powielone z aplikacji BitTorrent Sync.
+
+Aby ułatwić i ujednoznacznić opis implementacji zastosowano następujące terminy i nazwy zmiennych:
+
+\begin{description}[noitemsep]
+ \item[właściciel] --- użytkownik, który stworzył folder i rozdysponował klucze (\emph{secrets}) do pozostałych użytkowników,
+ 
+ \item[\textbf{[root]}] --- ścieżka będąca bezwzględną lokalizacją synchronizowanego katalogu w systemie operacyjnym użytkownika.
+\end{description}
+
+Podczas inicjowania nowego (a więc również pustego) folderu przez właściciela tworzone są wewnątrz niego dodatkowe katalogi:
+
+
+\begin{verbatim}
+                              [root]/
+                                  .sync/
+                                  .Users/
+                                  .Comments/
+\end{verbatim}
+
+Katalog \emph{.sync} tworzony jest przez aplikację BitTorrent Sync i domyślnie jest ukryty. Znajduje się w nim archiwum oraz pliki niezbędne do poprawnego działania synchronizacji folderu. Usunięcie katalogu \emph{.sync} skutkuje pełnym zanikiem funkcjonalności synchronizacji i wystąpieniem błędu. Pełna struktura katalogu \emph{.sync} wygląda następująco:
+
+\begin{verbatim}
+                    .sync/
+                        Archive/
+                            [ lista plików w archiwum ]
+                        ID
+                        IgnoreList
+                        StreamsList
+\end{verbatim}
+
+\begin{itemize}[noitemsep]
+ \item folder \emph{Archive} zawiera wersje plików, które zostały usunięte/zmodyfikowane podczas synchronizacji,
+ 
+ \item plik \emph{ID} reprezentuje identyfikator folderu, dzięki któremu możliwe jest znalezienie innych użytkowników lub urządzeń uwspólniających ten sam folder przez aplikację BitTorrent Sync,
+ 
+ \item plik \emph{IgnoreList} jest plikiem tekstowym, wewnątrz którego zawarta jest lista plików pomijanych podczas synchronizacji (wspierane są znaki: ,,*'' --- oznaczający dowolny ciąg znaków  oraz ,,?'' --- oznaczający jeden dowolny znak),
+ 
+ \item plik \emph{StreamsList} w odróżnieniu od \emph{IgnoreList} zawiera listę plików (obsługującą rozszerzone atrybuty plików), które będą synchronizowane (tzw. ,,white list'').
+\end{itemize}
+
+
+Pozostałe dwa foldery (\emph{.Comments} oraz \emph{.Users}) tworzone są przez aplikację zaimplementowaną w ramach niniejszej pracy i podobnie jak katalog \emph{.sync} są katalogami ukrytymi. Ewentualne usunięcie któregoś z tych katalogów będzie skutkować niepoprawnym działaniem aplikacji: w przypadku zniknięcia folderu \emph{.Comments} znikną wszystkie komentarze, a w przypadku \emph{.Users} aplikacja nie będzie mogła rozpoznać użytkowników piszących komentarze i współdzielących folder, co będzie skutkować błędami.
+
+Wszystkie usunięte pliki z synchronizowanego folderu są utrzymywane w archiwum wewnątrz tego folderu, więc możliwe jest ,,ręczne'' przekopiowanie utraconych danych z powrotem w przypadku przypadkowego (lub celowego) ich usunięcia. Czas, jaki mają użytkownicy na przywrócenie usuniętych danych to 30 dni --- po tym czasie dane sa usuwane bezpowrotnie Do ewentualnej rozbudowy aplikacji można dołączyć automatyczne odtwarzanie nie tylko całych usuniętych struktur \emph{.Users} oraz \emph{.Comments}, ale również usuniętych plików, do których odnosiły się niektóre wątki w systemie.
+
+\subsection{Katalog \emph{.Users}}
+
+Podczas dołączania użytkownika do synchronizowanego folderu umieszcza on w katalogu \emph{.Users} plik tekstowy o rozszerzeniu JSON, wewnątrz którego zapisuje słownik z danymi o sobie. Tworzony jest słownik o kluczach \emph{uid} oraz \emph{identity}, gdzie wartość \emph{uid} to identyfikator użytkownika, a \emph{identity} to nazwa użytkownika widziana przez innych użytkowników w aplikacji. Zainicjowany słownik zostaje zapisany do katalogu \emph{.Users} pod nazwą \texttt{<UID użytkownika>.json}.
+
+Taki sposób rozwiązania problemu zapisywania i wymiany danych o użytkownikach został wprowadzony ze względu na perspektywy rozwoju aplikacji. Utworzono fundamenty, które mogą być wygodnie i efektywnie rozbudowywane w kolejnych wersjach aplikacji.
+
+Rozwiązaniem łatwiejszym byłby jeden plik z listą wszystkich użytkowników, w którym podczas dołączania do folderu kolejni użytkownicy wprowadzaliby dane na swój temat. Niestety wszelkie modyfikacje plików grożą możliwością wystąpienia konfliktu podczas równoczesnego wprowadzania zmian. Zrezygnowano więc z takiego rozwiązania na rzecz tworzenia nowych plików zamiast edytowania już istniejących.
+
+Przykładowa struktura wewnątrz folderu \emph{.Users}:
+
+\begin{minipage}{\linewidth}
+\vspace{1em}
+\begin{verbatim}
+              .Users/
+                  2HI7KMNQWPONLKFORRWXGOTIZSHBGFIH.json
+                  2SAFDSBCXGFD765GDFS4GFDS35FDSBVB.json
+                  3REW54GFDS6578FDSGDF5BSH652F2B34.json
+\end{verbatim}
+\vspace{1em}
+\end{minipage}
+
+Zawartość pliku \texttt{2HI7KMNQWPONLKFORRWXGOTIZSHBGFIH.json} pochodzącego z katalogu \emph{.Users}:
+
+\begin{figure}[htb]
+  \begin{verbatim}
+                {
+                    "uid": "2HI7KRUNSSONIUJKMRWXGOTIZSHBGFIH", 
+                    "identity": "Filip Rachwalak"
+                }
+  \end{verbatim}
+  \caption{Przykładowy plik użytkownika.}
+\end{figure}
+
+W przypadku takiej zawartości folderu \emph{.Users} system TeamSync wyświetli w graficznym interfejsie trzech użytkowników. Biorąc pod uwagę, że zawartość pliku \texttt{2HI7KMNQWPONLKFORRWXGOTIZSHBGFIH.json} jest identyczna z przedstawioną powyżej, wyświetlaną nazwą jednego z użytkowników będzie ,,Filip Rachwalak''.
+
+\subsection{Katalog \emph{.Comments}}
+
+W przeciwieństwie do katalogu \emph{.Users} --- którego struktura jest płaska, a elementy tworzą listę --- folder \emph{.Comments} jest znacznie bardziej złożony. W miarę przybywania wątków katalog zwiększa swoją objętość zarówno wszerz jak i wgłąb, ponieważ wewnątrz niego odzwierciedlona jest drzewiasta struktura synchronizowanego katalogu. Dla łatwiejszego zrozumienia przyjmijmy następujący folder, który dwóch użytkowników współdzieli ze sobą:
+
+\begin{minipage}{\linewidth}
+\vspace{1em}
+\begin{verbatim}
+              [root]/
+                  .sync/
+                      [ pliki aplikacji BitTorrent Sync ]
+                  .Users/
+                      2HI7KMNQWPONLKFORRWXGOTIZSHBGFIH.json
+                      2SAFDSBCXGFD765GDFS4GFDS35FDSBVB.json
+                  .Comments/
+                  test1/
+                      test2/
+                          eee.txt
+                      ccc.txt
+                      ddd.txt
+                  aaa.txt
+                  bbb.txt
+\end{verbatim}
+\vspace{1em}
+\end{minipage}
+
+Jeśli użytkownik utworzyłby wątek dotyczący pliku \emph{[root]/aaa.txt}, aplikacja umieściłaby folder z wątkiem na pierwszym poziomie katalogu \emph{.Comments} zgodnie z lokalizacją pliku w głównym folderze. Natomiast jeśli użytkownik zacząłby wątek o plik \emph{[root]/test1/ccc.txt}, program stworzyłby dodatkowy folder wewnątrz \emph{.Comments} o nazwie \emph{test1} i w nim umieściłby folder z nowym wątkiem.
+
+Aby łatwiej było zrozumieć tworzenie nowych folderów z wątkami, załóżmy, że użytkownik utworzył trzy wątki o trzech plikach: \emph{aaa.txt} w głównej lokalizacji, \emph{ccc.txt} wewnątrz katalogu \emph{test1}, oraz \emph{eee.txt} wewnątrz katalogu \emph{test2}. Wówczas struktura folderu \emph{.Comments} wyglądałaby następująco:
+
+\begin{minipage}{\linewidth}
+\vspace{1em}
+\begin{verbatim}
+                  .Comments/
+                      test1/
+                          test2/
+                              wątek_o_eee/
+                                  [ pliki z komentarzami ]
+                          wątek_o_ccc/
+                              [ pliki z komentarzami ]
+                      wątek_o_aaa/
+                          [ pliki z komentarzami ]
+\end{verbatim}
+\vspace{1em}
+\end{minipage}
+
+Łatwo zauważyć, że w miarę przybywania wątków, struktura folderu rozrasta się i zbliża do struktury głównego folderu (oczywiście z pominięciem trzech ukrytych, dodatkowych katalogów oraz folderów przechowujących wątki). Przechowywanie komentarzy w ten sposób ma niestety swoją wadę --- wrażliwość na przenoszenie danych w obrębie uwspólnionego katalogu. Wyeliminowanie tego ograniczenia mogłoby należeć do najbliższych ulepszeń aplikacji w przyszłości.
+
+\section{Pliki konfiguracyjne}
+
+Ustawienia aplikacji, identyfikator użytkownika, adres serwera BitTorrent Sync API --- wszystkie niezbędne informacje do poprawnego działania systemu TeamSync, tworzonego w ramach niniejszej pracy magisterskiej, zawarte są wewnątrz plików konfiguracyjnych w formacie JSON (pliki \texttt{config.json} oraz \texttt{btsyncconfig.json}). Zlokalizowane są one wewnątrz głównego katalogu aplikacji --- istnieje więc tylko jedna instancja każdego z plików i jest globalna w skali aplikacji (nie jest powielana w każdym synchronizowanym folderze).
+
+Podczas uruchamiania aplikacji sprawdzana jest obecność tych plików. W przypadku ich obecności pobierane są z nich ustawienia i wykorzystywane w programie. Wszelka samodzielna modyfikacja tych plików np. poprzez edycję za pomocą dowolnego narzędzia do modyfikacji tekstu, może zakłócić działanie aplikacji ze względu na np. kodowanie znaków lub składnię formatu JSON. Jeśli aplikacja nie znajdzie któregoś z dwóch plików (np. podczas pierwszego uruchomienia programu), zainicjuje je i wypełni domyślnymi ustawieniami. Szczegóły przydzielanych ustawień oraz ich lista zostaną dokładnie omówione w następnych podrozdziałach.
+
+\subsection{Konfiguracja BitTorrent Sync}
+
+\label{configbtsync}
+
+Pierwszym z dwóch plików z ustawieniami jest \texttt{btsyncconf.json} zawierający informacje potrzebne do komunikacji programu Team Sync z aplikacją BitTorrent Sync. Podczas uruchamiania zaimplementowanej aplikacji inicjowany jest również BitTorrent Sync z przełącznikiem \texttt{--config} wskazującym na plik z ustawieniami.
+
+Aby możliwa była komunikacja z systemem BitTorrent Sync, konieczna jest znajomość adresu wraz z numerem portu, na którym API będzie nasłuchiwać i na który system TeamSync będzie wysyłał żądania. W pliku konfiguracyjnym znajdują się również pola niezbędne podczas autoryzacji żądania: \texttt{login} oraz \texttt{password}. Istnieje możliwość zablokowania domyślnego interfejsu wystawianego przez aplikację BitTorrent Sync, który nie jest potrzebny do poprawnego działania całości i został domyślnie zablokowany. Ostatnie dwa elementy obecne w pliku z ustawieniami to: \texttt{storage\_path} oraz \texttt{api\_key}.
+
+Wartość pola \texttt{api\_key} jest ciągiem znaków, który jest generowany przez twórców BitTorrent Sync i wydawany na prośbę deweloperów chcących testować API lub wytwarzać własne oprogramowanie z jego wykorzystaniem (z zastrzeżeniem o niekomercyjnym przeznaczeniu oprogramowania). Jeśli plik konfiguracyjny aplikacji BitTorrent Sync odczyta plik konfiguracyjny i nie będzie miał wypełnionego tego pola (lub będzie wypełnione niepoprawnym kluczem), API nie będzie odpowiadało na żądania.
+
+\texttt{storage\_path} jest ścieżką do katalogu ustawianą przez użytkownika, w którym będą przechowywane informacje potrzebne aplikacji BitTorrent Sync:
+
+\begin{itemize}[noitemsep]
+  \item pliki potrzebne do uruchomienia graficznego interfejsu aplikacji BitTorrent Sync,
+  
+  \item pliki tekstowe logów rejestrujące powstawanie nowych torrentów i nadawanie im znaczników czasowych,
+  
+  \item plik ustawień,
+  
+  \item plik historii,
+  
+  \item plik logów rejestrujący wszelkie zdarzenia dotyczące synchronizacji (w zależności od użytych jej sposobów),
+  
+  \item plik przechowujący identyfikator procesu aplikacji BitTorrent Sync, użyteczny podczas wyłączania programu TeamSync.
+\end{itemize}
+
+Poniżej umieszczono przykładowy plik konfiguracyjny \texttt{btsyncconfig.json}. Z wyjątkiem \texttt{api\_key} oraz \texttt{storage\_path} identyczny plik jest tworzony podczas pierwszego uruchomienia aplikacji TeamSync.
+
+\begin{figure}[htb]
+  \begin{verbatim}
+  {
+      "use_gui": false, 
+      "webui": {
+          "api_key": "<<ciąg znaków wg. wyrażenia regularnego [A-Z0-9]{136}>>", 
+          "login": "team", 
+          "password": "sync", 
+          "listen": "127.0.0.1:8787"
+      }, 
+      "storage_path": "/home/user/teamsync/.btsync-files"
+  }
+  \end{verbatim}
+  \caption{Przykładowy plik konfiguracyjny \texttt{btsyncconfig.json}.}
+\end{figure}
+
+Interpretacja przykładowego pliku konfiguracyjnego jest następująca: BitTorrent Sync nie będzie miał dostępnego oryginalnego interfejsu graficznego, natomiast wystawione API będzie odbierało żądania na adresie \texttt{127.0.0.1} oraz porcie \texttt{8787}. Aby polecenia wewnątrz zapytań zostały wykonane, wewnątrz nich muszą zawierać się dane uwierzytelniające \texttt{team} jako \emph{login} oraz \texttt{sync} jako \emph{password}. Ścieżka zapisu plików potrzebnych dla aplikacji BitTorrent Sync to \texttt{/home/user/\-teamsync/.btsync-files}.
+
+\subsection{Konfiguracja TeamSync}
+
+\label{configteamsync}
+
+Plik \texttt{config.json}, wewnątrz którego zapisana jest konfiguracja systemu \emph{TeamSync}, zawiera zarówno informacje dotyczące lokalizacji aplikacji, adresu serwera NTP, zapisanych tożsamości użytkownika w różnych folderach, jak i danych ułatwiających korzystanie z programu np. zapamiętane ostatnie ustawienia sortowania wątków. Podobnie jak plik \texttt{btsyncconfig.json} jest on wczytywany na początku działania programu lub tworzony jest nowy, z domyślnymi ustawieniami w przypadku jego nieobecności wewnątrz folderu przechowującego aplikację.
+
+Poniżej opisane zostaną pola konfiguracji --- wraz z wartościami, jakie mogą przyjmować --- podzielone na grupy odpowiadające powierzonym im funkcjom.
+
+\subsubsection*{Ustawienia ogólne}
+
+\begin{itemize}[noitemsep]
+  \item \emph{uid} --- identyfikator użytkownika generowany przez BitTorrent API. W celu uzyskania identyfikatora podczas tworzenia konfiguracji wysyłane jest żądanie \texttt{get\_secrets} (podrozdział \ref{getsecrets}, metoda \emph{get\_secrets}) zwracające trzy ciągi losowych znaków --- jeden z wyników użyty jest jako wartość pola \texttt{uid},
+  
+  \item \emph{operating\_system} --- system operacyjny sprawdzany przez program przy tworzeniu konfiguracji podczas pierwszego uruchomienia,
+  
+  \item \emph{btsync\_server\_address} --- adres oraz port, na którym BitTorrent Sync API nasłuchuje żądań od aplikacji TeamSync. Podobnie jak w pliku konfiguracyjnym systemu BitTorrent Sync, ustawione domyślnie na \texttt{127.0.0.1:8787},
+  
+  \item \emph{identities} --- wartość tego pola ma strukturę słownika, który w kluczach przechowuje \texttt{secret} folderu synchronizowanego przez użytkownika, a w wartości tzw. ,,tożsamość'', czyli nazwa, którą użytkownik wpisuje służąca do identyfikacji użytkowników między sobą wewnątrz folderu.
+\end{itemize}
+
+\subsubsection*{NTP}
+
+Zawarte w tej grupie ustawienia są potrzebne do komunikacji z serwerem NTP, z którego korzysta aplikacja podczas umieszczania komentarzy.
+
+\begin{itemize}[noitemsep]
+  \item \emph{ntp\_server\_name} --- nazwa domenowa serwera NTP, z którego użytkownik chce korzystać. Domyślnie przyjmowana jest wartość \texttt{pl.pool.ntp.org} ze względu na lokalizację,
+  \item \emph{ntp\_server\_version} --- wersja serwera NTP, domyślnie wersja $3$ (wersja $4$ w momencie pisania pracy jest w trakcie implementacji).
+\end{itemize}
+
+W przypadku dalszego rozwoju aplikacji możliwa będzie zmiana tych wartości przez użytkownika, co umożliwi wygodne korzystanie z aplikacji w innej strefie czasowej lub w nowszej wersji serwera NTP.
+
+\subsubsection*{Ułatwienia dostępu}
+
+Grupa ustawień, której jedynym zadaniem jest przyspieszanie pracy serwera aplikacji, aby nie było konieczne każdorazowe sprawdzanie ścieżki katalogu, wewnątrz którego znajduje się aplikacja.
+
+\begin{itemize}[noitemsep]
+  \item \emph{application\_path} --- bezwzględna ścieżka, w której znajduje się główna część aplikacji,
+  \item \emph{btsync\_exe\_file} --- bezwzględna lokalizacja wykonywalnego pliku aplikacji BitTorrent Sync,
+  \item \emph{btsync\_conf\_file} --- bezwzględna lokalizacja pliku z konfiguracją aplikacji BitTorrent Sync.
+\end{itemize}
+
+Zapisywanie powyższych ścieżek do pliku konfiguracyjnego wpływa również na przejrzystość kodu, ponieważ częste ich używanie w formie wymagającej każdorazowej konkatenacji odpowiednich łańcuchów znakowych z dodatkowymi lokalizacjami byłoby uciążliwe dla programisty. Znacznie łatwiej i przejrzyściej czytać powyższe dane z pliku i przechowywać je w pamięci programu.
+
+\subsubsection*{Ustawienia interfejsu graficznego}
+
+Ustawienia z tej grupy stworzone zostały z myślą o przyszłym rozwoju aplikacji w sferze graficznego interfejsu użytkownika. Obecnie nie ma możliwości ich zmiany, użytkownik musi pozostać przy ustawieniach domyślnych.
+
+\begin{itemize}[noitemsep]
+  \item \emph{comments\_date\_format} --- format daty wpisu, który użytkownik będzie mógł zmieniać w oparciu o kilka objaśnionych reguł. Wartość jest ustawiona domyślnie na \texttt{HH:mm - d.MM.yyyy}, a przykładowy wynik takiego formatowania to \texttt{12:34 - 7.04.2015},
+  \item \emph{threadsorting1} --- pole, którego wartość zapamiętuje ,,ulubiony'' typ sortowania wątków. Poniżej znajduje się lista możliwych wartości z ich objaśnieniem:
+  
+  \begin{itemize}[noitemsep]
+    \item \emph{name} --- sortowanie według nazwy wątku,
+    \item \emph{timestamp} --- sortowanie według czasu rozpoczęcia wątku,
+    \item \emph{numberofcomments} --- sortowanie według ilości komentarzy w wątku,
+    \item \emph{lastcomment} --- sortowanie według najświeższej odpowiedzi.
+  \end{itemize}
+  
+  \item \emph{threadsorting2} --- kierunek sortowania, możliwe wartości to: \emph{ascending} oraz \emph{descending}, domyslnie \emph{ascending}.
+\end{itemize}
+
+Wewnątrz tej grupy ustawień w ewentualnym przyszłym rozwoju aplikacji będą umieszczane dane związane np. z kolorem czcionki albo ramek, w których wyświetlane są komentarze.
+
+\subsubsection*{Przykładowy plik konfiguracyjny}
+
+Poniżej przestawiony zostanie przykładowy plik konfiguracyjny wypełniony domyslnymi wartościami podczas pierwszego tworzenia. Aby urzeczywistnić przykład do słownika \emph{identities} zostaną dodane przykładowe wpisy.
+
+\begin{figure}[htb]
+  \begin{verbatim}
+          {
+              "uid": "2HI7KRUNSSONIUJKMRWXGOTIZSHBGFIH",
+              "operating_system": "Linux", 
+              "btsync_server_address": "127.0.0.1:8787", 
+              "identities": {
+                  "AKO6XM5HJZJ2DFAG2NJ7T4PVAIA4U25XQ": "Filip Rachwalak", 
+                  "AQXKJKAC6XNJKNLE2YW6EOMCCBHG2UBUL": "Jan Iksiński"
+              }, 
+    
+              "ntp_server_name": "pl.pool.ntp.org", 
+              "ntp_server_version": 3, 
+
+              "application_path": "/home/user/teamsync",           
+              "btsync_exe_file": "/home/user/teamsync/btsync",
+              "btsync_conf_file": "/home/user/teamsync/btsyncconfig.json",
+
+              "commentsDateFormat": "HH:mm - d.MM.yyyy", 
+              "threadsorting1": "timestamp", 
+              "threadsorting2": "ascending", 
+          }
+  \end{verbatim}
+  \caption{Przykładowy plik konfiguracyjny \texttt{config.json}.}
+\end{figure}
+
+Według powyższej konfiguracji użytkownik posiada identyfikator \texttt{2HI7KRUN\-SSONIUJKM\-RWXGOTIZ\-SHBGFIH} i pracuje na systemie operacyjnym \texttt{Linux}. Adres BitTorrent Sync API, na który wysyłane będą żądania to domyślny adres \texttt{127.0.0.1:8787}. Użytkownik ma dwa współdzielone foldery: pierwszy o łańcuchu \emph{secret} \texttt{AKO6XM5H\-JZJ2DFAG2\-NJ7T4PVAI\-A4U25XQ}, wewnątrz którego inni identyfikują go pod nazwą \texttt{Filip \-Rachwalak} i drugi o łańcuchu \emph{secret} \texttt{AQXKJKAC\-6XNJKNLE2\-YW6EOMCC\-BHG2UBUL} gdzie tą nazwą jest \texttt{Jan \-Iksiński}.
+
+Ustawienia serwera \texttt{NTP} są domyślne dla Polski i dla aktualnej wersji usługi. Aplikacja TeamSync została zainstalowana wewnątrz lokalizacji \texttt{/home\-/user\-/teamsync}, o czym świadczy właściwość \texttt{application\_\-path}. Bezwzględne ścieżki pliku wykonywalnego oraz konfiguracyjnego aplikacji BitTorrent Sync to odpowiednio \texttt{/home/user/\-teamsync/btsync} oraz \texttt{/home/user/\-teamsync/\-btsyncconfig.json}.
+
+Ustawiony format czasu zamieszczenia komentarza wyświetlany w intefejse graficznym razem z nim to \texttt{HH:mm - d.MM.yyyy}. Oznacza to, że przykładowa godzina będzie wyświetlana w następujący sposób: \texttt{22:12}, a data: \texttt{7.11.2014}. Oddzielać je będzie myślnik, co --- dla wymienionej wyżej przykładowej daty oraz godziny --- da wyjściowy efekt: \texttt{22:12 - 7.11.2014}. Ustawienia dotyczące sortowania skutkować będą zmianą kolejności wątków podczas wyświetlania ich listy według czasu powstania wątku (\texttt{timestamp}) w porządku rosnącym (\texttt{ascending}).
+
+\section{Spójność komentarzy w wątku}
+
+\label{consistencies}
+
+Z uwagi na rozproszoną architekturę aplikacji TeamSync, należy zwrócić uwagę na możliwość logicznego zaburzenia przepływu dyskusji. Nie ma pewności, że wszyscy użytkownicy w każdej chwili będą mieli ,,aktualną'' wersję rozmowy. Może zajść sytuacja, w której użytkownik \texttt{A} wypowie się na pewien temat widząc tylko jeden komentarz w wątku (początkowy), podczas gdy w rzeczywistości już inni użytkownicy się wypowiedzieli, lecz użytkownik \texttt{A} nie zdążył uspójnić z nimi nowych danych. Wówczas może zdarzyć sie sytuacja, w której użytkownicy czytający wypowiedź użytkownika \texttt{A} --- po ostatecznym, całkowitym uspójnieniu danych --- będą się zastanawiać nad jej logicznym sensem.
+
+Dla lepszego opisania problemu w dalszej części sekcji rozważana będzie następująca sytuacja: w systemie istnieje wątek dotyczący pewnego zdjęcia z jednym komentarzem o treści: ,,\textit{Zdjęcie zrobione w Afryce podczas zachodu słońca u stóp Kilimandżaro}'' (wszyscy użytkownicy w systemie posiadają swoją lokalną kopię tego komentarza). Dodatkowo istnieje trzech użytkowników: \texttt{A}, \texttt{B} oraz \texttt{C}, którzy będą wypowiadać się na temat tego pliku. Jednak działają wewnątrz systemu rozproszonego, więc można założyć, że częsta będzie sytuacja, w której nieobecny będzie jeden lub kilku z węzłów współdzielących folder. Niech użytkownik \texttt{C} będzie nieobecny w systemie (do tej pory wszyscy użytkownicy --- łącznie z użytkownikiem \texttt{C} --- mają poprawnie zsynchronizowany wątek o zdjęciu --- mogą odczytać pierwszy komentarz). Wówczas --- podczas nieobecności węzła \texttt{C} --- tak mogłaby wyglądać krótka konwersacja użytkowników \texttt{A} oraz \texttt{B}:
+
+\vspace{5px}
+\begin{center}
+\begin{tabular}{c | c | c | c}
+ \textbf{Autor} & \textbf{Treść komentarza} & \textbf{Czas dodania} & \textbf{Odczytane przez \texttt{C}}\\
+ \hline
+ \texttt{A} & To zdjęcie bardzo mi się podoba! & 20:35:00 & --- \\
+ \texttt{B} & Faktycznie, ładne zdjęcie & 20:38:00 & ---
+\end{tabular}
+\end{center}
+\vspace{5px}
+
+Komentarze przechowywane są w plikach, w których zawarta jest treść (odpowiadająca kolumnie \textbf{Treść komentarza}), autor (kolumna \textbf{Autor}) oraz znacznik czasowy (kolumnie \textbf{Czas dodania}). Kolumna \textbf{Odczytane przez \texttt{C}} jest odzwierciedleniem zmiennej \emph{readby} dla użytkownika \texttt{C} wewnątrz komentarza (dokładny opis mechanizmu \emph{readby} znajduje się w sekcji \ref{archcomments}). Widać, że użytkownicy napisali po jednym komentarzu o godzinie 20:35 oraz 20:38. Wartości w ostatniej kolumnie --- przechowującej czas przeczytania komentarzy przez użytkownika \texttt{C} --- nie są wprowadzone, ponieważ użytkownik \texttt{C} nie zsynchronizował jeszcze folderu z komentarzami z użytkownikami \texttt{A} oraz \texttt{B}, co oznacza, że nie przeczytał ich wypowiedzi.
+
+Następnie obydwaj użytkownicy rozłączają się z sieci. Po chwili niepozwalającej na ewentualną komunikację z obydwoma użytkownikami, (np. o godzinie 21:20) użytkownik \texttt{C} uruchamia aplikację TeamSync i umieszcza swój komentarz: ,,\emph{Nie wiem jak Wam, ale mi się podoba!}'' (według jego najlepszej wiedzy jest pierwszym, który odpowiada na wypowiedź inicjującą wątek). Po jakimś czasie (około godziny 22:00) do systemu podłączają się dwaj pozostali użytkownicy i wszyscy trzej uspójniają wszystkie dane. Okazuje się, że kolejność umieszczenia wypowiedzi wewnątrz wątku jest następująca:
+
+\vspace{5px}
+\begin{center}
+\begin{tabular}{c | c | c | c}
+ \textbf{Autor} & \textbf{Treść komentarza} & \textbf{Czas dodania} & \textbf{Odczytane przez \texttt{C}}\\
+ \hline
+ \texttt{A} & To zdjęcie bardzo mi się podoba! & 20:35:00 & 22:00:14 \\
+ \texttt{B} & Faktycznie, ładne zdjęcie & 20:38:00 & 22:00:15 \\
+ \texttt{C} & Nie wiem jak Wam, ale mi się podoba! & 21:20:00 & 21:20:13
+\end{tabular}
+\end{center}
+\vspace{5px}
+
+Z punktu widzenia użytkowników \texttt{A} i \texttt{B}, logika wypowiedzi użytkownika \texttt{C} jest mocno zaburzona. Jest to konsekwencja rozproszonej architektury systemu (systemu BitTorrent Sync odpowiedzialnego za transport danych), której \emph{nie ma możliwości} zniwelować bez implementacji dodatkowych algorytmów rozproszonych, lub włączania w architekturę nieustannie dostępnego węzła, synchronizującego wszystkie dane na bieżąco w czasie rzeczywistym. Wówczas można już mówić o pewnej centralizacji systemu, czego w ramach niniejszej pracy chciano uniknąć.
+
+W systemie TeamSync zaimplementowano mechanizm, dzięki któremu można ,,usprawiedliwiać'' użytkowników, których logika i sens komentarzy bardzo lub tylko nieznacznie odbiegają od norm, lub którzy powielają wypisane wcześniej kwestie. Problem rozwiązano poprzez możliwość ustawienia takiego sposobu szeregowania dyskusji, aby każdy z użytkowników mógł przeczytać ją w takiej kolejności, w jakiej przeczytał ją autor wątpliwego komentarza. Kontynuując przykład ze zdjęciem z Afryki, jeśli użytkownik \texttt{A} chciałby odczytać dyskusję tak, jak odczytał ją użytkownik \texttt{C} musiałby zmienić w interfejsie graficznym spójność na ,,spójność według użytkownika \texttt{C}'' (dokładny opis funkcjonalności znajduje się w dodatku, w sekcji \ref{gui}). Wówczas zobaczyłby następującą kolejność komentarzy:
+
+\vspace{5px}
+\begin{center}
+\begin{tabular}{c | c | c | c}
+ \textbf{Autor} & \textbf{Treść komentarza} & \textbf{Czas dodania} & \textbf{Odczytane przez \texttt{C}}\\
+ \hline
+ \texttt{C} & Nie wiem jak Wam, ale mi się podoba! & 21:20:00 & 21:20:13 \\
+ \texttt{A} & To zdjęcie bardzo mi się podoba! & 20:35:00 & 22:00:14 \\
+ \texttt{B} & Faktycznie, ładne zdjęcie & 20:38:00 & 22:00:15
+\end{tabular}
+\end{center}
+\vspace{5px}
+
+Po obejrzeniu dyskusji w powyższej kolejności użytkownicy mogą w większym stopniu zrozumieć się nawzajem i uniknąć nieporozumień wynikających nie z ich błędu, lecz z założeń architektonicznych systemu. Co prawda funkcjonalność zmiany punktu odniesienia w czytaniu wątków w pewnym stopniu rekompensuje wady architektury, natomiast nie niweluje ich całkowicie, z czym jednak użytkownicy systemu rozproszonego powinni się liczyć.

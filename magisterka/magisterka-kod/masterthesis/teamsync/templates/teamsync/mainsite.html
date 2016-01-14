@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html ng-app="teamSyncApp">
+<head lang="pl">
+    <meta charset="UTF-8">
+    <title>Team Sync</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/inputs.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/filesArea.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/commentsArea.css' %}" />
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/containers.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/details.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/bootstrap.min.css' %}" /> -->
+    <link rel="stylesheet" type="text/css" href="{% static 'teamsync/styles/jquery.mCustomScrollbar.css' %}">
+</head>
+<body>
+{% csrf_token %}
+<!-- MAIN CONTAINER -->
+<div id="maincontainer">
+
+<section ng-controller="mainDataController">
+    <!-- HEADER BAR -->
+    <div id="headerbar">
+        <div id="avatar"><img src="{% static 'teamsync/img/avatar.png' %}" width="40px" height="40px"/></div>
+        <div id="headertext">{% verbatim %}Witaj {{ currentFolder.identity }}{% endverbatim %}</div>
+    </div>
+
+    {% verbatim %}
+    <!-- SIDEBAR -->
+    <div id="sidebar">
+        <center><b>Wybierz folder:</b></center>
+        <select
+                ng-model="currentFolder"
+                ng-options="folder.name for folder in folders"
+                ng-change="chooseFolder()"></select>
+        <div id="folderInfo" ng-show="folderChosen">
+            <center><b>Secret:</b></center>
+            <p>{{ currentFolder.secret }}</p>
+            <center><b>Użytkownicy:</b></center>
+            <div id="usersDiv" class="scrollable mCustomScrollbar" data-mcs-theme="dark">
+                <table id="usersTable">
+                    <tr ng-repeat="user in currentFolder.users">
+                        <td>{% endverbatim %}<img src="{% static 'teamsync/img/avatar.png' %}" />{% verbatim %}</td>
+                        <td>{{ user.identity }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <button id="deleteFolderButton" class="bigbutton" ng-click="deleteFolder()" ng-show="folderChosen">Usuń aktualny folder</button>
+        <button id="newFolderButton" class="bigbutton" ng-click="newFolderButtonClicked()">Dodaj nowy folder</button>
+        <button id="newExistingFolderButton" class="bigbutton" ng-click="newExistingFolderButtonClicked()">Dołącz istniejący folder</button>
+    </div>
+    {% endverbatim %}
+
+    <!-- NEW FOLDER WINDOW -->
+    <div class="windowBackground" ng-show="newFolderWindowVisible">
+        <div class="addFolderWindow">
+            <h3>Stwórz nowy folder:</h3>
+            <table>
+                <tr>
+                    <td>Folder:</td>
+                    <td><input class="pathInput" type="text" placeholder="Wpisz ścieżkę folderu" ng-model="newFolderPath" /></td>
+                    <td class="directoryPickerButton" ng-click="directoryPickerButtonClicked()"><a href="#"><img src="{% static 'teamsync/img/folder.png' %}" width="16px" height="16px" /></a></td>
+                </tr>
+                <tr>
+                    <td>Tożsamość:</td>
+                    <td><input class="identityInput" type="text" placeholder="Wpisz swoją tożsamość w folderze" ng-model="newFolderIdentity"/></td>
+                    <td></td>
+                </tr>
+            </table>
+            <div class="buttonsDiv">
+                <button class="bigbutton" ng-click="addNewFolder('')">Utwórz</button>
+                <button class="bigbutton" ng-click="newFolderWindowVisible = false">Cofnij</button>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <!-- NEW EXISTING FOLDER WINDOW -->
+    <div class="windowBackground" ng-show="newExistingFolderWindowVisible">
+        <div class="addFolderWindow">
+            <h3>Dołącz do istniejącego folderu:</h3>
+            <table>
+                <tr>
+                    <td>Secret:</td>
+                    <td><input class="pathInput" type="text" placeholder="Wpisz secret folderu" ng-model="newFolderSecret" /></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Folder:</td>
+                    <td><input class="pathInput" type="text" placeholder="Wpisz ścieżkę folderu" ng-model="newFolderPath" /></td>
+                    <td class="directoryPickerButton" ng-click="directoryPickerButtonClicked()"><a href="#"><img src="{% static 'teamsync/img/folder.png' %}" width="16px" height="16px" /></a></td>
+                </tr>
+                <tr>
+                    <td>Tożsamość:</td>
+                    <td><input class="identityInput" type="text" placeholder="Wpisz swoją tożsamość w folderze" ng-model="newFolderIdentity"/></td>
+                    <td></td>
+                </tr>
+            </table>
+            <div class="buttonsDiv">
+                <button class="bigbutton" ng-click="addNewFolder(newFolderSecret)">Dołącz</button>
+                <button class="bigbutton" ng-click="newExistingFolderWindowVisible = false">Cofnij</button>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <!-- DIRECTORY PICKER -->
+    <div class="windowBackground" ng-show="directoryPickerWindowVisible">
+        <div class="addFolderWindow">
+            <h3>Wybierz pusty katalog:</h3>
+
+
+            <div id="folderChooserHeader">
+                {% verbatim %}<p id="folderChooserPath">{{ newFolderPath }}</p>{% endverbatim %}
+                <a href="#"><img src="{% static 'teamsync/img/home.png' %}" ng-click="chooseFolderChooser('home', '')" /></a>
+                <a href="#"><img src="{% static 'teamsync/img/back.png' %}" ng-click="chooseFolderChooser('back', '')" /></a>
+            </div>
+
+            <div id="folderChooser" class="scrollable mCustomScrollbar" data-mcs-theme="dark">
+                <ul>
+                    <a href="#"><li ng-repeat="item in items" ng-click="chooseFolderChooser('next', item)"><img src="{% static 'teamsync/img/folder2.png' %}" /> {% verbatim %}<p> {{ item }}</p>{% endverbatim %}</li></a>
+                    {% verbatim %}<li id="numberOfFilesLi">Dodatkowo plików w lokalizacji: {{ numberOfFiles }}</li>{% endverbatim %}
+                </ul>
+            </div>
+
+            <div class="buttonsDiv">
+                <button class="bigbutton" ng-click="directoryPickerWindowVisible = false">Zatwierdź</button>
+                <button class="bigbutton" ng-click="directoryPickerWindowVisible = false; newFolderPath = defaultPath">Cofnij</button>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="maincontent" ng-show="folderChosen">
+    {% verbatim %}
+        <!-- FILES AREA -->
+        <div id="filesArea">
+            <!-- HEADER -->
+            <div id="filesHeader">
+                <div id="pathArea">
+                    <p ng-model="currentPath">{{ currentPath }}</p>
+                </div>
+                {% endverbatim %}
+                <a href="#"><div class="menuIcon" ng-click="homePath()"><img src="{% static 'teamsync/img/home.png' %}" /></div></a>
+                <a href="#"><div class="menuIcon" ng-click="backPath()"><img src="{% static 'teamsync/img/back.png' %}" /></div></a>
+                <a href="#"><div class="menuIcon" ng-click="changeView(true)"><img src="{% static 'teamsync/img/view.png' %}" /></div></a>
+                <a href="#"><div class="menuIcon" ng-show="currentPath === ''" ng-click="sortThreadsButtonClicked()"><img src="{% static 'teamsync/img/sort.png' %}" /></div></a>
+                <a href="#"><div class="menuIcon" ng-show="currentPath === ''" ng-click="dominatingUsersButtonClicked()"><img src="{% static 'teamsync/img/users.png' %}" /></div></a>
+                <div class="contextMenu" ng-show="sortThreadsMenuVisible">
+                    <label><div><input type="radio" name="group1" ng-model="threadSortingType" value="0" /> Sortuj alfabetycznie</div></label>
+                    <label><div><input type="radio" name="group1" ng-model="threadSortingType" value="1" /> Sortuj chronologicznie</div></label>
+                    <label><div><input type="radio" name="group1" ng-model="threadSortingType" value="2" /> Sortuj według popularności</div></label>
+                    <label><div><input type="radio" name="group1" ng-model="threadSortingType" value="3" /> Sortuj według aktualności</div></label>
+                    <label><div><input type="radio" name="group2" ng-model="threadSortingDirection" value="0" /> Rosnąco</div></label>
+                    <label><div><input type="radio" name="group2" ng-model="threadSortingDirection" value="1" /> Malejąco</div></label>
+                    <button class="smallbutton" ng-click="sortThreadsButtonClicked()">OK</button>
+                </div>
+                <div id="dominatingUsersContextMenu" class="contextMenu" ng-show="dominatingUsersMenuVisible">
+                    <center><label>Zaznacz użytkowników:</label></center>
+                    {% verbatim %}
+                    <label ng-repeat="dominatingUser in dominatingUsers"><div>
+                        <input type="checkbox" ng-model="dominatingUser.isDominating"> {{ dominatingUser.identity }}
+                    </div></label>
+                    {% endverbatim %}
+                    <center><label style="margin-top: 5px;">Podaj próg komentarzy w wątku:</label></center>
+                    <select ng-model="threshold">
+                        <option value="< 10 %">< 10 %</option>
+                        <option value="< 30 %">< 30 %</option>
+                        <option value="< 50 %">< 50 %</option>
+                        <option value="< 70 %">< 70 %</option>
+                        <option value="< 90 %">< 90 %</option>
+                        <option disabled="true">------------------</option>
+                        <option value="> 10 %">> 10 %</option>
+                        <option value="> 30 %">> 30 %</option>
+                        <option value="> 50 %">> 50 %</option>
+                        <option value="> 70 %">> 70 %</option>
+                        <option value="> 90 %">> 90 %</option>
+                    </select>
+                    <button id="setDominatingUsersButton" class="form-control" ng-click="sendDominatingUsers()">Ustaw filtr</button>
+                    <button id="resetDominatingUsersButton" class="form-control" ng-click="resetDominatingUsers()">Wyczyść filtr</button>
+                </div>
+            </div>
+
+            <!-- FILES VIEW -->
+            <div id="filesView" class="scrollable mCustomScrollbar" data-mcs-theme="dark">
+
+                <ul id="filesList">
+                    <a href="#"><li ng-click="fileClicked(file)" ng-repeat="file in files">
+                        <div class="filesListItem">
+                            <div class="fileIcon">
+                                <img ng-show="file.type == 'folder'" src="{% static 'teamsync/img/folder2.png' %}" />
+                                <img ng-show="showThreadFile(file) == 2" src="{% static 'teamsync/img/file2.png' %}" />
+                                <img ng-show="showThreadFile(file) == 1" src="{% static 'teamsync/img/threadfile.png' %}" />
+                                <img ng-show="file.type == 'threadfile' || file.type == 'thread'" src="{% static 'teamsync/img/thread.png' %}" {% verbatim %} />
+                            </div>
+                            <div class="fileName" ng-style="{'right': rightFileNameAreaValue}">
+                                <span ng-show="showODP(file)" class="ODPspan">[ODP] </span><span>{{ file.name }}</span>
+                            </div>
+                            <div class="additionalInfo" ng-show="isTimestampSorted() || isFreshnessSorted() || isPopularitySorted()">
+                                <span class="filesSpan" ng-show="isTimestampSorted()">{{ file.timestamp | date : 'HH:mm - d.MM.yyyy' }}</span>
+                                <span class="filesSpan" ng-show="isFreshnessSorted()">{{ file.lastcomment | date : 'HH:mm - d.MM.yyyy' }}</span>
+                                <span class="filesSpan" ng-show="isPopularitySorted()">liczba komentarzy: {{ file.numberofcomments }}</span>
+                            </div>
+                        </div>
+                        <ul class="fileSubList" ng-show="file.unrolled">
+                            <li class="fileSubListItem" ng-repeat="thread in file.threads" ng-click="fileClicked(thread)">
+                                <div class="fileIcon"><img {% endverbatim %} src="{% static 'teamsync/img/thread.png' %}" {% verbatim %} /></div>
+                                <div class="fileName"><span ng-show="showODP(thread)" style="font-weight: bold">[ODP] </span><span>{{ thread.name }}</span></div>
+                            </li>
+                            <li class="newThreadInFile"><div ng-click="newThread(file.name)">Nowy wątek w pliku . . .</div></li>
+                        </ul>
+                    </li></a>
+                    <li class="newThreadInFile" ng-show="viewMode === 'pliki'">
+                        <a href="#"><div ng-click="newThread('')" ng-hide="isFilesLoading()">Nowy wątek . . .</div></a>
+                        <div style="color: black;" ng-show="isFilesLoading()">Wczytywanie listy plików</div>
+                    </li>
+                </ul>
+            </div>
+            <div id="filesViewText">
+                <p>Tryb widoku: {{ viewMode }}</p>
+            </div>
+        </div>
+
+        <!-- COMMENTS AREA -->
+        <div id="commentsArea">
+
+            <!-- HEADER -->
+            <div id="commentsHeader">
+                <div id="threadTitleArea">
+                    <p ng-show="commentsHeaderVisible"><span id="commentsHeaderText">{{ commentsHeaderText }}</span>{{ currentThread.name }}</p>
+                </div>
+                {% endverbatim %}
+                <a href="#"><div class="commentsMenuIcon" ng-click="globalCommentsMenuClicked()"><img src="{% static 'teamsync/img/global.png' %}" /></div></a>
+                <a href="#"><div class="commentsMenuIcon" ng-click="userViewMenuClicked()" ng-show="userViewIconVisible"><img src="{% static 'teamsync/img/binocular.png' %}" /></div></a>
+                <a href="#"><div class="commentsMenuIcon" ng-click="showStatisticsButtonClicked()" ng-show="statisticsIconVisible"><img src="{% static 'teamsync/img/chart.png' %}" /></div></a>
+                <a href="#"><div class="commentsMenuIcon" ng-click="searchCommentsClicked()" ng-show="searchCommentsIconVisible"><img src="{% static 'teamsync/img/glass.png' %}" /></div></a>
+                {% verbatim %}
+                <div id="searchTextArea" ng-show="searchCommentsVisible && !statisticsVisible">
+                    <label><input id="passphraseInput" type="text" placeholder="Szukaj..." ng-model="searchphrase.comment"></label>
+                </div>
+                <div id="globalCommentsContextMenu" class="commentsContextMenu" ng-show="globalCommentsMenuVisible">
+                    <label><div><center>Zbiór komentarzy:</center></div></label>
+                    <select class="form-control" ng-change="changeCommentsScope()" ng-model="currentCommentsScope" convert-to-number>
+                        <option value="0" ng-disabled="newThreadOptionDisabled">nowy wątek</option>
+                        <option value="1" ng-disabled="currentThreadOptionDisabled">aktualny wątek</option>
+                        <option value="2">komentarze z lokalizacji</option>
+                        <option value="3">wszystkie komentarze użytkownika:</option>
+                        <option value="4">wszystkie komentarze w folderze</option>
+                    </select>
+                    <select class="form-control" ng-show="currentCommentsScope === '3'" ng-model="currentUserScope" ng-change="changeUserScope()">
+                        <option ng-repeat="(uid, identity) in UIDtoIdentity" ng-value="uid">{{ identity }}</option>
+                    </select>
+                </div>
+                <div id="userViewContextMenu" class="commentsContextMenu" ng-show="userViewMenuVisible">
+                    <label><div><center>Sortowanie komentarzy według:</center></div></label>
+                    <select class="form-control" ng-model="sortedByUser" ng-change="sortByUser()">
+                        <option ng-value="" ng-click="sortByUser('')">NTP (globalna spójność)</option>
+                        <option ng-repeat="(uid,identity) in UIDtoIdentity" ng-value="uid" ng-click="sortByUser(uid)">{{ identity }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- COMMENTS VIEW -->
+            <div id="commentsView" class="scrollable mCustomScrollbar" data-mcs-theme="dark">
+                <ul ng-hide="statisticsVisible">
+                    <li ng-repeat="comment in comments | filter:searchphrase | filter: commentsUserFilter">
+                        <div class="avatarArea">
+                            {% endverbatim %}<img src="{% static 'teamsync/img/avatar.png' %}" width="30px" height="30px" onclick="" alt="Ustawienia" />{% verbatim %}
+                        </div>
+                        <div class="antyavatarArea">
+                            <div class="authorArea">
+                                {{ UIDtoIdentity[comment.uid] }}
+                            </div>
+                            <div class="timeArea">
+                                {{ comment.timestamp | date : 'HH:mm - d.MM.yyyy' }}
+                            </div>
+                            <div class="commentArea" ng-mouseenter="showOptions = true" ng-mouseleave="showOptions = false"  ng-hide="comment.editing && currentCommentsScope === '1'">
+                                <span>{{ comment.comment  }}</span>
+                                <div ng-show="comment.history.length > 1 && showOptions && currentCommentsScope === '1'" class="smallCommentIcon" ng-click="comment.historing = true">
+                                    <a href="#">{% endverbatim %}<img src="{% static 'teamsync/img/history.png' %}" width="12px" height="12px" />{% verbatim %}</a>
+                                </div>
+                                <div ng-show="currentFolder.uid === comment.uid && showOptions && currentCommentsScope === '1'" class="smallCommentIcon" ng-click="comment.editing = true">
+                                    <a href="#">{% endverbatim %}<img src="{% static 'teamsync/img/edit.png' %}" width="12px" height="12px" />{% verbatim %}</a>
+                                </div>
+                            </div>
+                            <div class="commentArea" ng-show="comment.editing && currentCommentsScope === '1'">
+                                <textarea ng-model="comment.comment"></textarea>
+                                <button id="commentEditButton" class="smallbutton" ng-click="editComment(comment)">Popraw</button>
+                                <button id="cancelEditButton" class="smallbutton" ng-click="comment.editing = false">Cofnij</button>
+                            </div>
+                            <div ng-show="currentCommentsScope !== '0' && currentCommentsScope !== '1'">
+                                <div class="additionalInfoArea1">WĄTEK: </div>
+                                <a href="#"><div class="additionalInfoArea2" class="form-control" ng-click="threadClicked(comment.topic)">{{ comment.topic.name }}</div></a>
+                            </div>
+                        </div>
+                        <div id="historyView" ng-show="comment.historing">
+                            <center style="font-weight: bold; font-size: 13px; margin-bottom: 5px;">Historia zmian komentarza:</center>
+                            <ul>
+                                <li class="historyRow" ng-repeat="comm in comment.history">
+                                    <b>{{ comm.timestamp | date : 'HH:mm - d.MM.yyyy' }}</b><br />{{ comm.comment }}
+                                </li>
+                            </ul>
+                            <button id="cancelHistoringButton" class="form-control" ng-click="comment.historing = false">Zamknij historię</button>
+                        </div>
+                    </li>
+                    <li ng-show="currentCommentsScope === '1' && comments.length > 0">
+                        <div class="avatarArea" style="margin:15px 5px 0 0;">
+                            {% endverbatim %}<img src="{% static 'teamsync/img/avatar.png' %}" width="30px" height="30px" onclick="" alt="Ustawienia" />{% verbatim %}
+                        </div>
+                        <div id="commentReplyDiv" class="antyavatarArea">
+                            <div>
+                                <textarea ng-change="scrollDown()" id="commentTextArea" ng-model="newCommentText" placeholder="Odpowiedz . . ."></textarea>
+                                <button class="smallbutton" ng-click="writeComment()">Wyślij</button>
+                            </div>
+                        </div>
+                        <!-- NEEDED ONLY FOR SCROLLING DOWN AUTOMITACALLY WHEN INPUT GROWS -->
+                        <a style="resize: none; overflow-y: scroll;"> </a>
+                    </li>
+                </ul>
+                <p id="statisticsTitle" ng-show="statisticsVisible">UDZIAŁ UŻYTKOWNIKÓW:</p>
+                <table id="statsTable" ng-show="statisticsVisible">
+                    <thead>
+                        <tr>
+                            <td>Użytkownik</td>
+                            <td>Ilość komentarzy</td>
+                            <td>% komentarzy</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="stat in stats.stats">
+                            <td>{{ UIDtoIdentity[stat[0]] }}</td>
+                            <td>{{ stat[1] }} / {{ stats.allcomments }}</td>
+                            <td>{{ stats.percentages[stat[0]] }} %</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+                <div id="newThreadArea" ng-show="newThreadVisible">
+                    <div id="newThreadTitle">Nowy wątek:</div>
+                    <div class="threadInputLine">
+                        <div class="labelDiv">Lokalizacja:</div>
+                        <div class="inputDiv">{{ newThreadPath }}</div>
+                    </div>
+                    <div class="threadInputLine">
+                        <div class="labelDiv">Plik:</div>
+                        <div class="inputDiv">{{ newThreadFile }}</div>
+                    </div>
+                    <div class="threadInputLine">
+                        <div class="labelDiv">Tytuł wątku:</div>
+                        <div class="inputDiv"><input id="newThreadTitleInput" type="text" ng-model="currentThread.name"></div>
+                    </div>
+                    <div class="threadInputLine" style="height: 140px;">
+                        <div class="labelDiv">Treść:</div>
+                        <div class="inputDiv"><textarea id="newThreadCommentTextArea" rows="6" class="form-control" ng-model="newThreadComment"></textarea></div>
+                    </div>
+                    <div class="threadInputLine"><button id="writeNewThreadButton" class="form-control" ng-click="writeNewThread()">Dodaj wątek</button></div>
+                </div>
+            </div>
+
+            <!-- SORTING BAR -->
+            <div id="sortingBar">
+
+            </div>
+        </div>
+    {% endverbatim %}
+    </div>
+
+    <!-- FOOTERBAR -->
+    <div if="footerbar">
+
+    </div>
+</section>
+
+</div>
+
+<!-- SCRIPTS -->
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'teamsync/scripts/jquery-2.1.4.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'teamsync/scripts/angular.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'teamsync/scripts/mainDataController.js' %}"></script>
+<script type="text/javascript" src="{% static 'teamsync/scripts/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'teamsync/scripts/notify.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'teamsync/scripts/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+
+<script>(function($){$(window).load(function(){$(".scrollable").mCustomScrollbar();});})(jQuery);</script>
+<script>jQuery(document).ready(function(){jQuery("#commentTextArea").on("keydown keyup", function(){this.style.height = "1px";this.style.height = (this.scrollHeight + 2) + "px";});});</script>
+<script>document.addEventListener("DOMContentLoaded", function(event) {$("#maincontainer").show();});</script>
+
+
+</body>
+</html>

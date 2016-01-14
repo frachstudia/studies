@@ -1,0 +1,380 @@
+@font-face {
+    font-family: 'Sansation';
+    src: url('../fonts/sansation.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    font-size: 12px;
+    font-family: 'Sansation';
+    -webkit-box-shadow: none;
+    -moz-box-shadow:    none;
+    box-shadow:         none;
+}
+
+body {
+    background: url("../img/background.png") repeat;
+    font-family: 'Sansation', Calibri, Verdana, sans-serif;
+}
+
+a, a:active, a:visited, a:hover, a:focus {
+    text-decoration: none;
+    color: black;
+}
+
+p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+h1 {
+    font-size: 20px;
+}
+
+h2 {
+    font-size: 16px;
+}
+
+h3 {
+    font-size: 14px;
+}
+
+div.clear {
+    clear: both;
+}
+
+/* ############################################ MAIN DIVS ############################################ */
+
+#maincontainer {
+    color: white;
+    width: 100%;
+    min-height: 600px !important;
+    height: 100%;
+    display: none;
+}
+
+#headerbar {
+    position: absolute;
+    left: 40px;
+    right: 40px;
+    top: 10px;
+    height: 60px;
+    min-width: 920px;
+    background: rgba(255,255,255,.25);
+    border-radius: 10px;
+}
+
+#sidebar {
+    position: absolute;
+    color: lightgray;
+    top: 80px;
+    left: 40px;
+    bottom: 60px;
+    width: 200px;
+    background: rgba(255,255,255,.25);
+    border-radius: 10px;
+    padding: 15px 10px;
+    min-height: 390px;
+    overflow-x: hidden;
+}
+
+#maincontent {
+    position: absolute;
+    top: 80px;
+    left: 270px;
+    right: 40px;
+    bottom: 60px;
+    min-width: 670px;
+    min-height: 400px;
+    background: rgba(255,255,255,.25);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+#filesArea {
+    width: 43%;
+    background: rgba(255,255,255,.25);
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    bottom: 10px;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+#commentsArea {
+    width: -moz-calc(57% - 70px);
+    width: -webkit-calc(57% - 70px);
+    width: calc(57% - 70px);
+    background: rgba(255,255,255,.25);
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    border-radius: 5px;
+    padding: 10px;
+    color: black;
+}
+
+/* ############################################ HEADER ############################################ */
+
+#avatar {
+    float: left;
+    width: 40px;
+    height: 40px;
+    margin: 10px;
+    border-radius:5px;
+}
+
+#headertext {
+    float: left;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 24px;
+    color: lightgray;
+    vertical-align: middle;
+    line-height: 60px;
+}
+
+.headeritem {
+    float:right;
+    margin: 6px 6px 6px 0;
+    padding: 6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 5px;
+}
+
+.headeritem:hover {
+    background: rgba(255,255,255,.25);
+}
+
+/* ############################################ SIDEBAR ############################################ */
+
+#sidebar p {
+    width:180px;
+    word-wrap: break-word;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: none;
+}
+
+#sidebar select {
+    width: 90%;
+    margin: 2px auto 5px;
+    color: lightgray;
+}
+
+#sidebar button {
+    width: 160px;
+    height: 32px;
+    margin: 0 20px;
+}
+
+#usersDiv {
+    margin-top: 2px;
+    height: -moz-calc(100% - 50px);
+    height: -webkit-calc(100% - 50px);
+    height: calc(100% - 50px);
+    border: solid gray 1px;
+    border-radius: 5px;
+}
+
+#folderInfo {
+    height: -moz-calc(100% - 210px);
+    height: -webkit-calc(100% - 210px);
+    height: calc(100% - 210px);
+}
+
+#folderInfo p {
+    margin: 2px 0 5px;
+    border: solid gray 1px;
+    border-radius: 5px;
+    width: -moz-calc(100% - 10px);
+    width: -webkit-calc(100% - 10px);
+    width: calc(100% - 10px);
+    padding: 2px 5px;
+    text-align: center;
+}
+
+#usersTable img {
+    width: 20px;
+    height: 20px;
+}
+
+#usersTable tr {
+    margin: 1px 0;
+    line-height: 1;
+}
+
+#deleteFolderButton {
+    position: absolute;
+    background: rgba(255,255,255,0.4);
+    bottom: 110px;
+}
+
+#deleteFolderButton:hover {
+    background: rgba(255,255,255,0.6);
+}
+
+#newFolderButton {
+    position: absolute;
+    bottom: 55px;
+}
+
+#newExistingFolderButton {
+    position: absolute;
+    bottom: 15px;
+}
+
+/* ######################################## POPUP WINDOWS ######################################### */
+
+.windowBackground {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height:100%;
+    z-index: 1000;
+    background-color: black;
+    -moz-opacity: 0.9;
+    opacity:.9;
+    filter: alpha(opacity=90);
+}
+
+.addFolderWindow {
+    background: url("../img/background.png") repeat;
+    z-index: 1001;
+    margin: 150px auto;
+    width: 350px;
+    border-radius: 10px;
+    padding: 10px;
+    border: solid lightgray 1px;
+}
+
+.addFolderWindow h3 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.addFolderWindow table tr td {
+    padding-bottom: 5px;
+}
+
+.addFolderWindow table tr td:first-child {
+    text-align: right;
+    width: 80px;
+}
+
+.addFolderWindow input {
+    width: 220px;
+    margin-left: 2px;
+}
+
+.addFolderWindow button {
+    width: 80px;
+    float: left;
+    margin: 0 10px;
+    color: white;
+}
+
+.buttonsDiv {
+    width: 200px;
+    margin: 20px auto 0;
+    background: red;
+}
+
+.directoryPickerButton {
+    padding: 1px;
+}
+
+.directoryPickerButton img {
+    width: 14px;
+    height: 14px;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.directoryPickerButton img:hover {
+    background: rgba(255,255,255,0.4);
+}
+
+#folderChooserHeader {
+    width: 100%;
+    height: 20px;
+}
+
+#folderChooserHeader img {
+    width: 15px;
+    height: 15px;
+    float: right;
+    background: rgba(255,255,255,0.4);
+    border-radius: 5px;
+    padding: 2px;
+    margin-left: 3px;
+}
+
+#folderChooserHeader img:hover {
+    background: rgba(255,255,255,0.6);
+}
+
+#folderChooserPath {
+    float: left;
+    max-width: 80%;
+}
+
+#folderChooser {
+    width: 100%;
+    height: 200px;
+    border-radius: 5px;
+    border: solid 1px lightgrey;
+    background: rgba(255,255,255,0.2);
+    padding: 5px 0;
+}
+
+#folderChooser ul {
+    list-style-type: none;
+    color: black;
+    margin: 5px;
+    padding: 0;
+}
+
+#folderChooser ul li {
+    border-radius: 5px;
+    padding: 2px;
+    height: 20px;
+}
+
+#folderChooser ul li p {
+    line-height: 20px;
+    vertical-align: center;
+    float: left;
+}
+
+#folderChooser ul li:hover {
+    background: rgba(255,255,255,0.5);
+}
+
+#folderChooser ul li img {
+    width: 16px;
+    height: 16px;
+    line-height: 1.2;
+    padding: 2px;
+    float: left;
+    margin-right: 5px;
+}
+
+#numberOfFilesLi{
+    text-align: center;
+    line-height: 20px;
+    border-radius: 5px;
+    padding: 2px;
+    height: 20px;
+}
+
+/* ############################################ FOOTER ############################################ */

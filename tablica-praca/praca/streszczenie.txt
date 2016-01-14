@@ -1,0 +1,6 @@
+Celem pracy jest zaprojektowanie i wykonanie sterownika diodowej matrycy świetlnej wraz z oprogramowaniem dla komputera PC umożliwiającym tworzenie animacji tekstowych i graficznych możliwych do wyświetlenia na skonstruowanym urządzeniu.
+Praca niniejsza opisuje konstrukcję sterownika diodowej matrycy świetlnej w oparciu o mikrokontroler z rodziny AVR wraz z oprogramowaniem dla komputera PC umożliwiającym tworzenie animacji tekstowych i graficznych.
+Część teoretyczna pracy omawia w ogólny sposób najważniejsze zagadnienia związane z projektem, jak idea wyświetlania multipleksowego na matrycach LED, opis zastosowanego mikrokontrolera AT90USB647, interfejsu USB i kart pamięci SD oraz podstawowe informacje na temat fontów komputerowych.
+Rozdział projektowy zawiera zarys systemu oraz opis formatów plików służących do wymiany informacji między urządzeniem a komputerem. Rozdział implementacyjny szczegółowo opisuje wykonanie systemu na trzech obszarach: urządzenia elektronicznego, oprogramowania mikrokontrolera oraz programu na komputer PC.
+Pracę zamyka podsumowanie osiągniętych rezultatów i perspektywy rozszerzenia funkcjonalności urządzenia. W dodatku zamieszczono instrukcje obsługi dla użytkowników omawiające sposób nawigacji po menu tablicy i tworzenie animacji w programie komputerowym.
+
